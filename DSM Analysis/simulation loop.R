@@ -1,8 +1,7 @@
 library(dsm)
 library(dsims)
-library(raster)
-library(rgeos)
-library(dismo)
+#library(rgeos)
+#library(dismo)
 library(sf)
 library(Distance)
 
@@ -10,49 +9,33 @@ source('helper functions.R')
 
 # load appropriate region, design and density
 
-#source('default region.R')  #947.3938 from 10
+#source('default region.R')
 
-#source('default region line.R')  # 1027.302 from 50
+source('default region line.R')  # 1027.302 from 50
 
 #source('North Sea region.R') # 1081.279 from 50
 
 #source('North Sea Strata.R') # 1096.36 from 50
 
-source('North Sea region Line.R') # 1145.379 from 50
+#source('North Sea region Line.R') # 1145.379 from 50
 
-# Create an empty raster
-grid <- raster(extent(sf::st_bbox(region@region)))
-# Choose its resolution (truncation distance)
-res(grid) <- design.trunc
-gridpolygon <- rasterToPolygons(grid)
-sp.region <- sf::as_Spatial(region@region)
-pred.grid <- raster::intersect(gridpolygon, sp.region)
-plot(pred.grid)
+source('prediction grid.R')
 
+# set transect type based on survey design
+if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
+} else {transect.type <- 'point'}
 
-# create the data.frame for prediction
-preddata <- as.data.frame(matrix(NA, ncol=3, nrow=nrow(pred.grid@data)))
-colnames(preddata) <- c("X", "Y", "area")
-for (i in 1:nrow(pred.grid@data)){
-  preddata[i, c("X", "Y")] <- pred.grid@polygons[[i]]@labpt
-  preddata[i, c("area")] <- pred.grid@polygons[[i]]@area
-}
-
-
-sim <- make.simulation(reps = 500,
+sim <- make.simulation(reps = 100,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
                        ds.analysis = analyses)
 
-# set transect type based on survey design
-if (class(design) == "Line.Transect.Design") {
-  transect.type <- 'line'
-} else {transect.type <- 'point'}
+estimates <- list(ds.est = c(rep(NA, sim@reps)),
+                  dsm.est = c(rep(NA, sim@reps)),
+                  dsm.var = c(rep(NA, sim@reps)),
+                  dsm.dev = c(rep(NA, sim@reps)))
 
-
-dsm.estimates <- c(rep(NA, sim@reps))
-ds.estimates <- c(rep(NA, sim@reps))
 mods <- 0
 
 for (j in 1:sim@reps) {
@@ -77,10 +60,9 @@ for (j in 1:sim@reps) {
     segs <- stdh_cast_substring(st_segmentize(samplers,
                                               dfMaxLength = 2*design.trunc),
                                 to = "LINESTRING")
+    
     segs$Effort <- as.numeric(st_length(segs))
     segs$Sample.Label <- 1:length(segs$transect)
-    
-    # can add in explicit segment area
     
     # create polygons based on truncation distance from line
     # Note: mitre may need set for eszigzagcom studies
@@ -89,18 +71,13 @@ for (j in 1:sim@reps) {
     # Find the areas for each segment, using intersection with region
     # to account for study area edge profile
     segs$Area <- as.numeric(st_area(st_intersection(poly, region@region)))
-    #segs$Area <- as.numeric(st_area(poly))
     
-
     segs <- st_centroid(segs)
     
     segdata <- cbind(as.data.frame(st_drop_geometry(segs)),
                       st_coordinates(segs))
     
-
-    
     # link obsdata to the segment id's
-    
     obsdata <- st_as_sf(obsdata, coords = c('x','y'))
     
     # remove transects as sample labels
@@ -109,22 +86,26 @@ for (j in 1:sim@reps) {
     #set crs for consistency
     st_crs(obsdata) <- st_crs(segs)
     
-    obsdata <- st_join(obsdata, segs, join = st_nearest_feature)
+    obsdata<- st_join(obsdata, segs, join = st_nearest_feature)
     
     obsdata <- st_drop_geometry(obsdata)
     
     
   } else {
-    points <- survey@transect@samplers
-    areas <- pi*(design.trunc**2)
-    effort <- 1
     
-    segdata <- data.frame(Sample.Label = 1:length(points$transect),
-                          Effort = effort,
-                          X = st_coordinates(points)[,1],
-                          Y = st_coordinates(points)[,2],
-                          Area = areas)
-
+    # For point designs the segments are already defined
+    segs <- survey@transect@samplers
+    
+    segs$Effort <- 1
+    segs$Sample.Label <- segs$transect
+    segs$transect <- NULL
+    
+    poly <- st_buffer(segs,design.trunc)
+    
+    segs$Area <- as.numeric(st_area(st_intersection(poly, region@region)))
+    
+    segdata <- cbind(as.data.frame(st_drop_geometry(segs)),
+                     st_coordinates(segs))
   }
   
   obsdata <- obsdata[,c("object", "Sample.Label", "distance")]
@@ -138,7 +119,7 @@ for (j in 1:sim@reps) {
 	                     formula=~1,
 	                     key=detect@key.function,
 	                     adjustment=NULL))
-  ds.estimates[j] <- last(ds.mod$dht$individuals$N$Estimate)
+  estimates$ds.est[j] <- last(ds.mod$dht$individuals$N$Estimate)
   
   # density model
   dsm.mod <- dsm(count~s(X, Y,k = sum(survey@transect@samp.count)),
@@ -157,39 +138,34 @@ for (j in 1:sim@reps) {
                             pred.data = preddata,
                             off.set = preddata$area)
   
-  dsm.estimates[j] <- mod_tw_est$pred[[1]]
+  estimates$dsm.est[j] <- unlist(mod_tw_est$pred)
+  
+  estimates$dsm.var[j] <- mod_tw_est$pred.var
+  estimates$dsm.dev[j] <- summary(dsm.mod)$dev.expl
 
 }
+plot(survey, region)
+plot(survey)
 
-k = sum(survey@transect@samp.count) # for limiting/setting smoothing
+write.csv(estimates, file = paste0('estimates.',region@region.name, sim@reps,'.csv'))
 
-write.csv(dsm.estimates, file = paste0('dsm.estimates.',region@region.name,'.csv'))
-write.csv(ds.estimates, file = paste0('ds.estimates.',region@region.name,'.csv'))
+hist(estimates$dsm.est, breaks = 50)
+hist(estimates$ds.est, breaks = 50)
+hist(estimates$dsm.var, breaks = 50)
+hist(estimates$dsm.dev, breaks = 50)
 
-hist(dsm.estimates, breaks = 50)
-hist(ds.estimates, breaks = 50)
+mean(estimates$dsm.est)
+mean(estimates$ds.est)
 
-mean(dsm.estimates)
-mean(ds.estimates)
+mean(estimates$dsm.var)
+
+
 
 # for 100 sims without taking intersection of region and polygons
 # 1113.42
 # 996.4175
 
-# for 10 sims with taking intersection
-# mean(dsm.estimates)
-# [1] 994.7875
-# > mean(ds.estimates)
-# [1] 992.4474
-
-sd(dsm.estimates)
-sd(ds.estimates)
-
-quantile(dsm.estimates, c(0.025, 0.975))
-quantile(ds.estimates, c(0.025, 0.975))
-
 # 
-# $$
-#   E(n_j) = p_jA_jexp(\beta_0 + \sum_k f_k(z_{jk} )
-#                      
-#                      $$
+
+sd(estimates$dsm.est)
+sd(estimates$ds.est)
