@@ -87,7 +87,7 @@ seg.data <- cbind(as.data.frame(st_drop_geometry(segs)),
                  st_coordinates(segs))
 
 
-# poly <- st_buffer(segs, dist = design.trunc, endCapStyle = 'FLAT')
+ poly <- st_buffer(segs, dist = design.trunc, endCapStyle = 'FLAT')
 # points <- st_centroid(poly)
 # areas <- as.numeric(st_area(st_intersection(poly, region@region)))
 # 
@@ -124,7 +124,6 @@ p <- ggplot() +
   geom_sf(data=obs, size=0.5, aes(colour=Sample.Label)) 
 p
 
-
 obs <- st_drop_geometry(obs)
 
 obs <- obs[,c("object", "Sample.Label", "distance")]
@@ -147,10 +146,9 @@ res(grid) <- design.trunc
 gridpolygon <- rasterToPolygons(grid)
 sp.region <- as_Spatial(region@region)
 pred.grid <- raster::intersect(gridpolygon, sp.region)
-plot(pred.grid)
 
-
-
+plot(gridpolygon)
+plot(sp.region)
 # create the data.frame for prediction
 preddata <- as.data.frame(matrix(NA, ncol=3, nrow=dim(pred.grid@data)[1]))
 colnames(preddata) <- c("X", "Y", "area")

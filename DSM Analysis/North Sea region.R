@@ -9,7 +9,7 @@ region <- make.region(region.name = "North Sea",
 
 cover <- make.coverage(region = region,
                        n.grid.points = 1000)
-design.trunc = 20
+design.trunc = 10
 design <- make.design(region = region,
                       transect.type = "point",
                       samplers = 30,

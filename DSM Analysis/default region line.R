@@ -10,7 +10,7 @@ design.trunc = 60
 
 design <- make.design(region = region,
                       transect.type = "line",
-                      samplers = 15,
+                      samplers = 12,
                       truncation = design.trunc,
                       design.angle = 0)
 
