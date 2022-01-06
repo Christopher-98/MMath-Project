@@ -12,7 +12,7 @@ design <- make.design(region = region,
                       transect.type = 'line',
                       design = 'eszigzagcom',
                       samplers = 12,
-                      design.angle = 0,
+                      design.angle = 90,
                       bounding.shape = 'convex.hull',
                       truncation = design.trunc)
 
