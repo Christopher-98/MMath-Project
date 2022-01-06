@@ -1,9 +1,7 @@
-library(dsm)
-library(dsims)
-#library(rgeos)
-#library(dismo)
 library(sf)
 library(Distance)
+
+setwd("~/Chris/University/Mathematics/Y5/Project/MMath-Project/DSM Analysis")
 
 source('helper functions.R')
 
@@ -11,7 +9,9 @@ source('helper functions.R')
 
 #source('default region.R')
 
-source('default region line.R')  # 1027.302 from 50
+#source('default region line.R')  # 1027.302 from 50
+
+source('default region line zigzag.R')
 
 #source('North Sea region.R') # 1081.279 from 50
 
@@ -25,7 +25,7 @@ source('prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 100,
+sim <- make.simulation(reps = 1000,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -34,7 +34,8 @@ sim <- make.simulation(reps = 100,
 estimates <- list(ds.est = c(rep(NA, sim@reps)),
                   dsm.est = c(rep(NA, sim@reps)),
                   dsm.var = c(rep(NA, sim@reps)),
-                  dsm.dev = c(rep(NA, sim@reps)))
+                  dsm.dev = c(rep(NA, sim@reps)),
+                  detections = c(NULL))
 
 mods <- 0
 
@@ -44,10 +45,9 @@ for (j in 1:sim@reps) {
   
   survey <- run.survey(sim)
   
-  # is this needed?
-  fit <- analyse.data(analyses, data.obj = survey)
-  
   obsdata <- survey@dist.data[!is.na(survey@dist.data$object),]
+  
+  estimates$detections[j] <- nrow(obsdata)
   
   # section for it line transects to split into segments
   if (transect.type == 'line') {
@@ -123,7 +123,7 @@ for (j in 1:sim@reps) {
   
   # density model
   dsm.mod <- dsm(count~s(X, Y,k = sum(survey@transect@samp.count)),
-                 ddf.obj=fit$model,
+                 ddf.obj = ds.mod,
                  segment.data=segdata,
                  segment.area = segdata$Area,
                  observation.data=obsdata,
@@ -139,7 +139,6 @@ for (j in 1:sim@reps) {
                             off.set = preddata$area)
   
   estimates$dsm.est[j] <- unlist(mod_tw_est$pred)
-  
   estimates$dsm.var[j] <- mod_tw_est$pred.var
   estimates$dsm.dev[j] <- summary(dsm.mod)$dev.expl
 
@@ -147,18 +146,19 @@ for (j in 1:sim@reps) {
 plot(survey, region)
 plot(survey)
 
-write.csv(estimates, file = paste0('estimates.',region@region.name, sim@reps,'.csv'))
-
 hist(estimates$dsm.est, breaks = 50)
 hist(estimates$ds.est, breaks = 50)
 hist(estimates$dsm.var, breaks = 50)
 hist(estimates$dsm.dev, breaks = 50)
+hist(estimates$detections, breaks = 50)
 
 mean(estimates$dsm.est)
 mean(estimates$ds.est)
 
 mean(estimates$dsm.var)
 
+
+write.csv(estimates, file = paste0('estimates.',region@region.name, sim@reps,transect.type,'.csv'))
 
 
 # for 100 sims without taking intersection of region and polygons
