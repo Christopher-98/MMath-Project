@@ -9,10 +9,13 @@ region <- make.region(region.name = 'Default')
 design.trunc = 60
 
 design <- make.design(region = region,
-                      transect.type = "line",
+                      transect.type = 'line',
+                      design = 'eszigzagcom',
                       samplers = 12,
-                      truncation = design.trunc,
-                      design.angle = 0)
+                      design.angle = 0,
+                      bounding.shape = 'convex.hull',
+                      truncation = design.trunc)
+
 
 samplers <- generate.transects(design, region)
 
