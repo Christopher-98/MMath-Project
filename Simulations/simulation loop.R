@@ -1,25 +1,24 @@
 library(sf)
 library(Distance)
 
-setwd("~/Chris/University/Mathematics/Y5/Project/MMath-Project")
-
-source('helper functions.R')
+getwd()
+source('Simulations/helper functions.R')
 
 # load appropriate region, design and density
 
-#source('default region.R')
+source('Regions/default region.R')
 
-source('default region line.R')  # 1027.302 from 50
+#source('Regions/default region line.R')  # 1027.302 from 50
 
-#source('default region line zigzag.R')
+#source('Regions/default region line zigzag.R')
 
-#source('North Sea region.R') # 1081.279 from 50
+#source('Regions/North Sea region.R') # 1081.279 from 50
 
-#source('North Sea Strata.R') # 1096.36 from 50
+#source('Regions/North Sea Strata.R') # 1096.36 from 50
 
-#source('North Sea region Line.R') # 1145.379 from 50
+#source('Regions/North Sea region Line.R') # 1145.379 from 50
 
-source('prediction grid.R')
+source('Simulations/prediction grid.R')
 
 # set transect type based on survey design
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
@@ -158,7 +157,7 @@ mean(estimates$ds.est)
 mean(estimates$dsm.var)
 
 
-write.csv(estimates, file = paste0('estimates.',region@region.name, sim@reps,transect.type,'.csv'))
+write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,transect.type,'.csv'))
 
 
 # for 100 sims without taking intersection of region and polygons
