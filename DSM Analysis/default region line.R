@@ -40,5 +40,5 @@ analyses <- make.ds.analysis(dfmodel = list(~1),
                              er.var = "R2",
                              truncation = design.trunc)
 
-plot(detect, pop.desc)
+#plot(detect, pop.desc)
 
