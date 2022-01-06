@@ -1,7 +1,7 @@
 library(sf)
 library(Distance)
 
-setwd("~/Chris/University/Mathematics/Y5/Project/MMath-Project/DSM Analysis")
+setwd("~/Chris/University/Mathematics/Y5/Project/MMath-Project")
 
 source('helper functions.R')
 
@@ -9,9 +9,9 @@ source('helper functions.R')
 
 #source('default region.R')
 
-#source('default region line.R')  # 1027.302 from 50
+source('default region line.R')  # 1027.302 from 50
 
-source('default region line zigzag.R')
+#source('default region line zigzag.R')
 
 #source('North Sea region.R') # 1081.279 from 50
 
@@ -25,7 +25,7 @@ source('prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 1000,
+sim <- make.simulation(reps = 10,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,

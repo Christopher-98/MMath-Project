@@ -24,9 +24,10 @@ main objective is that the use of density surface modelling can be extended beyo
 # Background research
 
 
+Informed from Buckland et al 2015
+One of the key aims in areas of applied ecological research is to determine the abundance of a particular population of interest, such as in a periodic way to monitor its development over time and determine changes, or to evaluate the potential effect of a new factor, such as a human disturbance. The size of the population can determine the importance of any new factors, with a smaller populations more under threat from a given factor compared to an abundant one. One option for determining a populations size is to count every single individual, known as a census, similar to the UK completing a Census of its population every 10 years. However, in the natural world, this is only realistically possible in the simplest instances and therefore a different approach must be used. Researches often use some form of sampling method to conduct a sample of the target population and draw conclusions for the overall population based on this sample. 
 
 
-Distance sampling is an approach to estimating population abundance and density by surveying a small portion
 
 need to define truncation distance, detection function, abundance and density from literature.
 
@@ -51,7 +52,7 @@ plot(detect_hr, pop.desc, main = 'hr detection function')
 plot(detect_uf, pop.desc, main = 'uf detection function')
 
 ```
-Therefore for an animal at distance _x_ from the closest transect the probability of the animal being detected is given by the detection function evaluated at _x_, provided _x_ is less than or equal to _w_. The distance data generated during the survey is then analysed to estimate the abundance _N_ of the study area, with options available for several models to be analysed for each set of distance data, with a model selection criteria used to select the best, using AIC as the default. These operations are then repeated the specified number of times, say _R_, for each density and design, to obtain a set of simulations of animal distribution and survey design, alongside a corresponding set of estimates _Nhat_ of N. typical values for _R_ are between 100 and 1000. In the case where the design is intrinsically selected by the user, as opposed to randomised, the exact same design will be used for all _R_ simulations
+Therefore for an animal at distance _x_ from the closest transect the probability of the animal being detected is given by the detection function evaluated at _x_, provided _x_ is less than or equal to _w_. The distance data generated during the survey is then analysed to estimate the abundance _N_ of the study area, with options available for several models to be analysed for each set of distance data, with a model selection criteria used to select the best, using AIC as the default. These operations are then repeated the specified number of times, say _R_, for each density and design, to obtain a set of simulations of animal distribution and survey design, alongside a corresponding set of estimates $\hat{N}$ of N. typical values for _R_ are between 100 and 1000. In the case where the design is intrinsically selected by the user, as opposed to randomised, the exact same design will be used for all _R_ simulations
 
 ## Density Surface Modelling
 
@@ -62,7 +63,7 @@ In order to construct a density surface model, initial the approach must be deci
 
 The model used when the count per segment is used as the response is:
 
-$$ \mathbb{E}(n_j) = \hat{p_j}A_jexp(\beta_0 + \sum_k f_k(z_{jk} ) $$
+$$ \mathbb{E}(n_j) = \hat{p_j}A_jexp[ \, \beta_0 + \sum_k f_k(z_{jk} ) ]\,$$
 
 Where $f_k$ are the smoothed functions of the covariates and $\beta_0$ is the intercept term. By multiplying the segment area $A_j$ by the estimated probability of detection $p_j$ this gives the effective area of the segment, acting as an offset to account for different segment areas. Where distance is the only convariate in the detection function, $p_j$ is constant across all segments and therefore $\hat{p_j} = \hat{p} \forall j$. The distribution of $n_j$ can then be modeled using an overdispersed Poisson, Negative binomial or Tweedie distribution. 
 
@@ -72,6 +73,8 @@ $$ \hat{N_j} = \sum_{r = 1}^{R_j}  \frac{s_{jr}}{\hat{p_j}}$$
 Where $R_j$ is the number of observations in the jth segment and $s_{jr}$ is the size of the rth group observed, with this being 1 if only individuals are observed. As identified by Buckland et al 2015, this is an Horvitz–Thompson-like estimator of the segment abundance, allowing for covariates to be included through $\hat{p_j}$. The fitted model then becomes:
 $$ \mathbb{E}(\hat{N_j}) = A_jexp [ \, \beta_0 + \sum_k f_k(z_{jk} ) ]\, $$
 Where the model follows the same three distributions as before. The main difference between these models is that the offset is now the physical area of each segment, as opposed to the effective area in the first model for $n_j$.
+
+To allow for a DSM to predict abundance, a series of prediction cells must be defined. These are not necessarily restricted to just the original study region, allowing for regions outside the study area to be predicted over. Each of the prediction cells must include the same covariates as specified in the dsm, including the area of each cell. Predictions can then be made for the abundance in each cell and by summing these over the whole region, an overall abundance estimate can be obtained. The size of the prediction cells may be specified by the user, however cells 'smaller than the resolution of the spatially referenced data' do not have an influence on the abundance estimates produced by dsm. 
 
 ## Modelling
 
@@ -88,7 +91,7 @@ A population description was then constructed based on this density surface with
 plot(detect, pop.desc)
 ```
 
-A prediction grid is then constructed across the study region and is identical for each simulation iteration, with the resolution of the grid set at the truncation distance of the design, as Miller et al notes that using cells smaller than the spatial data resolution will not have an effect on the abundance estimates provided by dsm.
+A prediction grid is then constructed across the study region and is identical for each simulation iteration, with the resolution of the grid set at the truncation distance of the design,XXX as Miller et al notes that using cells smaller than the spatial data resolution will not have an effect on the abundance estimates provided by dsmXXX.
 
 The simulation loop then begins. For each iteration, a new survey constructed. From this, the observation data and segmented data is extracted.
 
@@ -96,9 +99,9 @@ In the case of line transect designs, the transects are split to allow them to b
 
 Based on this data, both a distance sampling model and density surface model are constructed, with the dsm modeling the counts against the smooth of spatial locations using a tweedie error distribution. In the smoothed term, the degrees of freedom is restricted to the total number of transects. The abundance estimates are extracted from both models and stored alongside the prediction variance and deviance explained from the dsm model. 
 
-## results
+## Results
 
-Having completed 1000 bootstrap simulations for both the distance sampling and density surface models, we can now examine and compare these to give us an insight into the circumstances under which a particular model is better of worse than the other.
+Having completed 1000 bootstrap simulations for both the distance sampling and density surface models with each design, we can now examine and compare these to give us an insight into the circumstances under which a particular model is better of worse than the other.
 
 ### Default Region Point design
 
