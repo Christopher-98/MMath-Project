@@ -1,5 +1,5 @@
 predgrid <- st_make_grid(st_bbox(region@region),
-                          cellsize = c(design.trunc, design.trunc))
+                          cellsize = c(design.trunc*0.5, design.trunc*0.5))
 
 predgrid <- st_intersection(predgrid, region@region)
 
