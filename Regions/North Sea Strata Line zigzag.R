@@ -16,7 +16,7 @@ design <- make.design(region = region,
                       bounding.shape = rep("convex.hull",2),
                       design = c("eszigzagcom", "eszigzagcom"),
                       samplers = c(15, 10),
-                      design.angle = c(90,90),
+                      design.angle = c(45,0),
                       truncation = design.trunc,
                       coverage.grid = cover)
 
