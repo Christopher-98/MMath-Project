@@ -1,4 +1,11 @@
 # file to contain required functions for simulations
+# and all package loading
+
+library(sf)
+library(Distance)
+library(dsm)
+library(dsims)
+
 
 stdh_cast_substring <- function(x, to = "MULTILINESTRING") {
   ggg <- st_geometry(x)
