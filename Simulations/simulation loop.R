@@ -1,22 +1,23 @@
 library(sf)
 library(Distance)
 
-getwd()
 source('Simulations/helper functions.R')
 
 # load appropriate region, design and density
 
-source('Regions/default region.R')
+#source('Regions/default region.R')
 
-#source('Regions/default region line.R')  # 1027.302 from 50
+#source('Regions/default region line.R')  
 
 #source('Regions/default region line zigzag.R')
 
-#source('Regions/North Sea region.R') # 1081.279 from 50
+#source('Regions/North Sea region.R') 
 
-#source('Regions/North Sea Strata.R') # 1096.36 from 50
+#source('Regions/North Sea Strata.R') 
 
-#source('Regions/North Sea region Line.R') # 1145.379 from 50
+#source('Regions/North Sea region Line.R')
+
+source('Regions/North Sea Strata Line.R') 
 
 source('Simulations/prediction grid.R')
 
@@ -24,7 +25,7 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 10,
+sim <- make.simulation(reps = 100,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -48,6 +49,9 @@ for (j in 1:sim@reps) {
   
   estimates$detections[j] <- nrow(obsdata)
   
+  # obtain region boundaries for use in calculating segment areas
+  seg.region <- st_union(region@region)
+  
   # section for it line transects to split into segments
   if (transect.type == 'line') {
     
@@ -69,26 +73,9 @@ for (j in 1:sim@reps) {
     
     # Find the areas for each segment, using intersection with region
     # to account for study area edge profile
-    segs$Area <- as.numeric(st_area(st_intersection(poly, region@region)))
+    segs$Area <- as.numeric(st_area(st_intersection(poly, seg.region)))
     
     segs <- st_centroid(segs)
-    
-    segdata <- cbind(as.data.frame(st_drop_geometry(segs)),
-                      st_coordinates(segs))
-    
-    # link obsdata to the segment id's
-    obsdata <- st_as_sf(obsdata, coords = c('x','y'))
-    
-    # remove transects as sample labels
-    obsdata$Sample.Label<- NULL
-    
-    #set crs for consistency
-    st_crs(obsdata) <- st_crs(segs)
-    
-    obsdata<- st_join(obsdata, segs, join = st_nearest_feature)
-    
-    obsdata <- st_drop_geometry(obsdata)
-    
     
   } else {
     
@@ -101,14 +88,26 @@ for (j in 1:sim@reps) {
     
     poly <- st_buffer(segs,design.trunc)
     
-    segs$Area <- as.numeric(st_area(st_intersection(poly, region@region)))
+    segs$Area <- as.numeric(st_area(st_intersection(poly, seg.region)))
     
-    segdata <- cbind(as.data.frame(st_drop_geometry(segs)),
-                     st_coordinates(segs))
   }
   
-  obsdata <- obsdata[,c("object", "Sample.Label", "distance")]
+  segdata <- cbind(as.data.frame(st_drop_geometry(segs)),
+                   st_coordinates(segs))
   
+  # link obsdata to the segments
+  obsdata <- st_as_sf(obsdata, coords = c('x','y'))
+  
+  # remove existing transects as sample labels
+  obsdata$Sample.Label<- NULL
+  
+  #set crs for consistency
+  st_crs(obsdata) <- st_crs(segs)
+  
+  obsdata<- st_join(obsdata, segs, join = st_nearest_feature)
+  obsdata <- st_drop_geometry(obsdata)
+  
+  obsdata <- obsdata[,c("object", "Sample.Label", "distance")]
   obsdata$size <- 1
   
   # distance sampling model
