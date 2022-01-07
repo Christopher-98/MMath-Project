@@ -1,5 +1,3 @@
-library(sf)
-library(Distance)
 
 source('Simulations/helper functions.R')
 
@@ -17,7 +15,9 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea region Line.R')
 
-source('Regions/North Sea Strata Line.R') 
+#source('Regions/North Sea Strata Line.R') 
+
+source('Regions/North Sea Strata Line zigzag.R') 
 
 source('Simulations/prediction grid.R')
 
@@ -25,7 +25,7 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 100,
+sim <- make.simulation(reps = 1000,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
