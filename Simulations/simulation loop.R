@@ -25,13 +25,14 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 1000,
+sim <- make.simulation(reps = 100,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
                        ds.analysis = analyses)
 
 estimates <- list(ds.est = c(rep(NA, sim@reps)),
+                  ds.se = c(rep(NA, sim@reps)),
                   dsm.est = c(rep(NA, sim@reps)),
                   dsm.var = c(rep(NA, sim@reps)),
                   dsm.dev = c(rep(NA, sim@reps)),
@@ -118,6 +119,7 @@ for (j in 1:sim@reps) {
 	                     key=detect@key.function,
 	                     adjustment=NULL))
   estimates$ds.est[j] <- last(ds.mod$dht$individuals$N$Estimate)
+  estimates$ds.se[j] <- last(ds.mod$dht$individuals$N$se)
   
   # density model
   dsm.mod <- dsm(count~s(X, Y,k = sum(survey@transect@samp.count)),

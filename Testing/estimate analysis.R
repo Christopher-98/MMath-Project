@@ -1,14 +1,27 @@
 # simulation analysis
 
-mean(dsm.estimates)
-mean(ds.estimates)
+# load appropriate estimates file
 
-quantile(dsm.estimates, c(0.025, 0.975))
-quantile(ds.estimates, c(0.025, 0.975))
+estimates #<- 
 
-# is dsm more likely to provide an over or under estimate compared to ds
-sum(dsm.estimates>1000)
-sum(dsm.estimates<1000)
+# calculate mean of each method
+dsm.mean <- mean(estimates$dsm.est)
+ds.mean <- mean(estimates$ds.est)
 
-mean(dsm.estimates[dsm.estimates>1000])
-mean(dsm.estimates[dsm.estimates<1000])
+dsm.sd <- sd(estimates$dsm.est)
+ds.sd <- sd(estimates$ds.est)
+
+
+dsm.mean +c(-1, 1) *qnorm(0.975)*dsm.sd
+ds.mean+c(-1, 1) *qnorm(0.975)*ds.sd
+
+# calculate percentage bias
+(dsm.mean - 1000) / 1000 *100
+(ds.mean - 1000) / 1000 *100
+
+# need standard errors of dsm estimates?
+dsm.sd.mean <- mean(sqrt(estimates$dsm.var))
+
+
+ds.se.mean <- mean(estimates$ds.se)
+
