@@ -3,6 +3,8 @@ title: "Project"
 author: "Chris Martin"
 date: "05/01/2022"
 output: pdf_document
+fontsize: 12pt
+spacing: double
 ---
 
 ```{r setup, include=FALSE}
@@ -11,6 +13,20 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 library(dsims)
 
 ```
+
+## Notes
+There is still a significant amount of work I wish to complete before submission for the interim deadline. Namely:
+
+Code explanation if required.
+
+Additional survey regions, designs and densities tests to ensure code can handle different designs
+
+Proper comparison of models via coefficients of variation, bias, mean standard errors and standard deviation of estimates
+
+Perform model checking for both ds and dsm model, via gam.check, residuals, modelling residuals by GAM
+
+Potential example of use by simulation of making predictions outside survey area based on distance data.
+
 
 ## Abstract
 
@@ -22,7 +38,6 @@ main objective is that the use of density surface modelling can be extended beyo
 
 
 # Background research
-
 
 Informed from Buckland et al 2015
 One of the key aims in areas of applied ecological research is to determine the abundance of a particular population of interest, such as in a periodic way to monitor its development over time and determine changes, or to evaluate the potential effect of a new factor, such as a human disturbance. The size of the population can determine the importance of any new factors, with a smaller populations more under threat from a given factor compared to an abundant one. One option for determining a populations size is to count every single individual, known as a census, similar to the UK completing a Census of its population every 10 years.
@@ -36,9 +51,11 @@ The two simple techniques of distance sampling are, as mentioned above, line tra
 Line transect sampling consists of a set of lines being placed over a study area by some predetermined method, for example systematic with regular spacing between each or randomly generated. The observer moves along each line, known as a transect, looking for animals or animal groups, referred to as clusters. These are defined by Buckland et al. 2015 as "a group of animals with a well defined location for the group centre." For any animal or cluster the observer detects at they make their way along each transect, the observer estimates or calculates the perpendicular distance _x_ of the animal or cluster from the nearest point of the line. 
 For point transect sampling, the transects are a set of points placed over the study area, with different placement methods available as with line transects, however, most common is a systematically spaced grid. At each point, the observer records any individuals or clusters observed from the point, along with the distance _r_ from the point at which the observation was made. 
 
-Distance sampling can therefore be thought of as a method of plot sampling, with the additional factor of not every animal on the plots being observed. For this, the plots in line transect sampling are rectangles of dimension $2wl$, where _l_ is the length of a given transect and may change between transects depending on the survey design and area shape, and _w_ is the truncation distance. This is the distance from the line, beyond which observations are not recorded if the truncation distance is determined prior to the study. However, if the truncation distance is determined during the analysis phase, then this is the distance beyond which the observations are excluded from the analysis. For the plots in point trasect sampling, these are circles of area $\pi w^2$ with the plot radius _w_ being the truncation distance.
+Distance sampling can therefore be thought of as a method of plot sampling, with the additional factor of not every animal on the plots being observed. For this, the plots in line transect sampling are rectangles of dimension $2wl$, where _l_ is the length of a given transect and may change between transects depending on the survey design and area shape, and _w_ is the truncation distance. This is the distance from the line, beyond which observations are not recorded if the truncation distance is determined prior to the study. However, if the truncation distance is determined during the analysis phase, then this is the distance beyond which the observations are excluded from the analysis. For the plots in point transect sampling, these are circles of area $\pi w^2$ with the plot radius _w_ being the truncation distance.
 
-## Detection function estimation
+## Detection function
+
+To take into account the fact that not all animals or clusters within each transect are observed, the probability of detecting an animal with a transect must be estimated. This is done by using the distances to the animals observed, _x_ for line transects and _r_ for point transects, to fit a detection function $g(x)$, defined as 'the probability of detecting an animal that is distance _x_ $(0\le x \le w)$ from the line'. This can be similarly defined as $g(r)$ for point transects where _r_$(0\le r \le w)$ is the distance from the point. The normal technique is to assume that all animals on the point or line are definitely observed, such that $g(0) = 1$. Several detection functions can be defined by the user and a model selection criteria can be used to select the most appropriate for the data. However, all good detection function models share a set of properties, namely, they should have a shoulder, be non-increasing, be model robust, have pooling robustness and be efficient. A shoulder is when the probability of detection remains close to 1 as distance from the transect increases, before decreasing at a later point. Non-increasing suggests that the probability of detection at a far distance should not exceed the probability at any shorter distance from the transect. Model robustness is necessary as the true function is never know and as such, any models must be flexible to allow a range of different profiles to be modelled. Pooling robustness is a property whereby it is assumed that the model will not be affected if any covariates which influence detection are not included in the model, however these can be included through the use of multi-covariate detection functions, part of Multiple-covariate distance sampling (MCDS). Efficiency informs that should all other factors be equal, a preferable model is on which gives high precision, although high precision should not outweigh the need for the other properties to be satisfied.  
 
 ## Distance Sampling Simulations
 
@@ -79,7 +96,7 @@ Where $R_j$ is the number of observations in the jth segment and $s_{jr}$ is the
 $$ \mathbb{E}(\hat{N_j}) = A_jexp [ \, \beta_0 + \sum_k f_k(z_{jk} ) ]\, $$
 Where the model follows the same three distributions as before. The main difference between these models is that the offset is now the physical area of each segment, as opposed to the effective area in the first model for $n_j$.
 
-To allow for a DSM to predict abundance, a series of prediction cells must be defined. These are not necessarily restricted to just the original study region, allowing for regions outside the study area to be predicted over. Each of the prediction cells must include the same covariates as specified in the dsm, including the area of each cell. Predictions can then be made for the abundance in each cell and by summing these over the whole region, an overall abundance estimate can be obtained. The size of the prediction cells may be specified by the user, however cells 'smaller than the resolution of the spatially referenced data' do not have an influence on the abundance estimates produced by dsm. 
+To allow for a DSM to predict abundance, a series of prediction cells must be defined. These are not necessarily restricted to just the original study region, allowing for regions outside the study area to be predicted over. Each of the prediction cells must include the same covariates as specified in the dsm, including the area of each cell. Predictions can then be made for the abundance in each cell and by summing these over the whole region, an overall abundance estimate can be obtained. The size of the prediction cells may be specified by the user, however cells 'smaller than the resolution of the spatially referenced data' do not have an influence on the abundance estimates produced by dsm.
 
 ## Modelling
 
@@ -87,7 +104,7 @@ The simulation was initially tested using the default region generated by dsims 
 
 ``` {r}
 source('Regions/default region.R')
-plot(density, region)# main = 'Basic density surface for Default region.')
+plot(density, region) # main = 'Basic density surface for Default region.')
 
 ```
 
@@ -99,8 +116,16 @@ plot(detect, pop.desc)
 
 A prediction grid is then constructed across the study region and is identical for each simulation iteration, with the resolution of the grid set at the truncation distance of the design. As Miller et al noted, smaller cells sizes could be used but there is a limit since using cells smaller than the spatial data resolution will not have an effect on the abundance estimates provided by dsm, and there is also the computational increase resulting from smaller cell sizes.
 
-The simulation loop then begins. For each iteration, a new survey constructed. From this, the observation data and segmented data is extracted.
+The simulation loop then begins. For each iteration, a new survey constructed. From this, the observation data and segmented data is extracted. An example survey for each of the designs is displayed below:
+```{r fig.show = 'hold', out.width='33%'}
+plot(survey, main = 'Example Point transect survey')
 
+source('Regions/default region line.R')
+plot(survey, main = 'Example Line transect survey')
+
+source('Regions/default region line zigzag.R')
+plot(survey, main = 'Example Line zigzag transect survey')
+```
 In the case of line transect designs, the transects are split to allow them to be modelled as points. Each transect is split into segments of approximate length $2w$ with _w_ being the truncation distance, as suggested by Miller et al 2013 and each segment assigned its own unique sample label. For Point transect designs, each point is treated as its own segment. The polygons of each segment is then created using the st_buffer command (sf package, ref required), using _w_ as the distance. This leads to squares of approximately $2w * 2w$ for line transects and circles of radius _w_ for points. These allow the area of each segment to be calculated, a requirement for the dsm model. This is calculated using st_area, on the intersection between the polygons and the study region, to ensure only areas within the study region are counted towards segment area. Failure to do this results in the areas of each segment being larger than they are in the survey, and as a result the dsm abundance estimate is smaller than true, since the prediction grid is only over the survey area. Once the segment areas have been calculated, they can be linked to the observation data by allocating each observation to the nearest segment and giving this the respective segments Sample label in the observation data, overwriting the original allocation.
 
 Based on this data, both a distance sampling model and density surface model are constructed, with the dsm modeling the counts against the smooth of spatial locations using a tweedie error distribution. In the smoothed term, the degrees of freedom is restricted to the total number of transects. The abundance estimates are extracted from both models and stored alongside the prediction variance and deviance explained from the dsm model. 
@@ -116,8 +141,9 @@ For the initial default region with the point transect design, the histograms of
 default.point <- read.csv('Estimates/region1000point.csv')
 
 hist(default.point$dsm.est,breaks = 50, main = 'Histogram of DSM estimates')
+abline(v = mean(default.point$dsm.est), col = 'red')
 hist(default.point$ds.est,breaks = 50, main = 'Histogram of DS estimates')
-
+abline(v = mean(default.point$ds.est), col = 'red')
 ```
 
 These plots show somewhat similar data since both estimates are generated by the same data set. If we now compare the means and 95% confidence intervals:
@@ -130,34 +156,67 @@ mean(default.point$ds.est) +c(-1, 1) *qnorm(0.975)*sd(default.point$ds.est)
 
 ```
 
-It can be seen that the mean of the dsm estimates appears to very close to the true population while the distance sampling method is closer. Examining the confidence intervals for both methods, the interval for the dsm model is in this case slightly wider than that of the ds model, indicating it is slightly less accurate in the case of this region and density surface however this effect is very small.
+It can be seen that the mean of the dsm estimates appears to similar to the true population of 1000 while the distance sampling method is closer. Examining the confidence intervals for both methods, the interval for the dsm model is in this case slightly wider than that of the ds model, indicating it is slightly less accurate in the case of this region and density surface however this effect is very small.
 
-Next, we can evaluate how many times the true abundance, 1000, was within the 95% for every model computed.
+Next, we can evaluate how many times the true abundance, was within the 95% CI for every model computed.
 ```{r}
 default.point.ci.lo <- default.point$dsm.est - qnorm(0.975)*sqrt(default.point$dsm.var)
 default.point.ci.up <- default.point$dsm.est + qnorm(0.975)*sqrt(default.point$dsm.var)
 
-sum(default.point$dsm.est >= default.point.ci.lo & default.point$dsm.est <= default.point.ci.up)
+default.point.truthinCI <- sum(default.point$dsm.est >= default.point.ci.lo & default.point$dsm.est <= default.point.ci.up)
 
 ```
+With truth being in the 95% CI ```r default.point.truthinCI``` times out of 1000, we can conclude that the model is particularly good and containing truth within its estimated confidence interval. However, this could be due the the variance in each model being quite large resulting in wide confidence intervals. 
 
 ### Default region parallel Line design
 
-Now examining the results of the line transect design, we see the histograms of the two estimates below:
+Now examining the results of the line transect design, on the same density surface, we see the histograms of the two estimates below:
 
 ```{r fig.show = 'hold', out.width='50%'}
 default.line <-  read.csv('Estimates/region1000line.csv')
 
 hist(default.line$dsm.est,breaks = 50, main = 'Histogram of DSM estimates')
+abline(v = mean(default.line$ds.est), col = 'red')
 hist(default.line$ds.est,breaks = 50, main = 'Histogram of DS estimates')
+abline(v = mean(default.line$ds.est), col = 'red')
 ```
 
+These plots are very similar to their point transect counterparts, with the mean for each signified by the red line appearing very close to truth. Investigating this further, we find the means for each set of estimates to be:
 ```{r}
+print('Mean of DSM estimates and associated 95% CI')
 mean(default.line$dsm.est)
-mean(default.line$ds.est)
-
 mean(default.line$dsm.est) +c(-1, 1) *qnorm(0.975)*sd(default.line$dsm.est)
+
+
+print('Mean of DS estimates and associated 95% CI')
+mean(default.line$ds.est)
 mean(default.line$ds.est) +c(-1, 1) *qnorm(0.975)*sd(default.line$ds.est)
+
+```
+
+### Default region Zigzag Line design
+
+Now examining the results of the zigzag line transect design, on the same density surface, we see the histograms of the two estimates below:
+
+```{r fig.show = 'hold', out.width='50%'}
+default.zig <-  read.csv('Estimates/Default1000line.csv')
+
+hist(default.zig$dsm.est,breaks = 50, main = 'Histogram of DSM estimates')
+abline(v = mean(default.zig$dsm.est), col = 'red')
+hist(default.zig$ds.est,breaks = 50, main = 'Histogram of DS estimates')
+abline(v = mean(default.zig$ds.est), col = 'red')
+```
+
+These plots differ slightly to their point and parallel line counterparts, with the mean appearing further away from truth than previously, however there is a known error in the code that may cause this and is being investigated. Investigating this further, we find the means for each set of estimates to be:
+```{r}
+print('Mean of DSM estimates and associated 95% CI')
+mean(default.zig$dsm.est)
+mean(default.zig$dsm.est) +c(-1, 1) *qnorm(0.975)*sd(default.line$dsm.est)
+
+
+print('Mean of DS estimates and associated 95% CI')
+mean(default.zig$ds.est)
+mean(default.zig$ds.est) +c(-1, 1) *qnorm(0.975)*sd(default.line$ds.est)
 
 ```
 
