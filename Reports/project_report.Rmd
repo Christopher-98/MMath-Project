@@ -237,7 +237,4 @@ default.zig.ci.up <- default.zig$dsm.est + qnorm(0.975)*sqrt(default.zig$dsm.var
 
 default.zig.truthinCI <- sum(default.zig$dsm.est >= default.zig.ci.lo & default.zig$dsm.est <= default.zig.ci.up)
 ```
-With truth being in the 95% CI ```r default.line.truthinCI``` times out of 1000, we can conclude that the model is particularly good and containing truth within its estimated confidence interval. However, this could again be due the the variance in each model being quite large resulting in wide confidence intervals. 
-
-
-## conclusion
+With truth being in the 95% CI ```r default.line.truthinCI``` times out of 1000, we can conclude that the model is particularly good and containing truth within its estimated confidence interval. However, this could again be due the the variance in each model being quite large resulting in wide confidence intervals.
