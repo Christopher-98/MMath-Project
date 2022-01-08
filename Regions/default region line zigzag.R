@@ -44,4 +44,11 @@ analyses <- make.ds.analysis(dfmodel = list(~1),
                              truncation = design.trunc)
 
 #plot(detect, pop.desc)
+sim <- make.simulation(reps = 1,
+                       design = design,
+                       population.description = pop.desc,
+                       detectability = detect,
+                       ds.analysis = analyses)
 
+
+survey <- run.survey(sim)
