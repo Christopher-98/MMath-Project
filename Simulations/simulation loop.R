@@ -7,7 +7,7 @@ source('Simulations/helper functions.R')
 
 #source('Regions/default region line.R')  
 
-#source('Regions/default region line zigzag.R')
+source('Regions/default region line zigzag.R')
 
 #source('Regions/North Sea region.R') 
 
@@ -17,7 +17,7 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea Strata Line.R') 
 
-source('Regions/North Sea Strata Line zigzag.R') 
+#source('Regions/North Sea Strata Line zigzag.R') 
 
 source('Simulations/prediction grid.R')
 
@@ -25,7 +25,7 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 100,
+sim <- make.simulation(reps = 1,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -134,12 +134,20 @@ for (j in 1:sim@reps) {
   
   # obtain the abundance estimate
   # needs checked to ensure is close to original population
-  mod_tw_est <- dsm.var.gam(dsm.mod,
+  dsm.mod.var <- dsm.var.gam(dsm.mod,
                             pred.data = preddata,
                             off.set = preddata$area)
+  dsm.sum <- summary(dsm.mod.var)
   
-  estimates$dsm.est[j] <- unlist(mod_tw_est$pred)
+  ci.term <- exp(qnorm(1-0.05/2) * sqrt(log(1+dsm.sum$cv**2)))
+  dsm.ci <- c(dsm.sum$pred.est / asymp.ci.c.term,
+                 dsm.sum$pred.est * asymp.ci.c.term)
+  
+  estimates$dsm.est[j] <- dsm.sum$pred.est
   estimates$dsm.var[j] <- mod_tw_est$pred.var
+  estimates$dsm.se[j] <- last(dsm.sum$se)
+  estimates$dsm.ci.lo[j] <- dsm.ci[1]
+  estimates$dsm.ci.lo[j] <- dsm.ci[2]
   estimates$dsm.dev[j] <- summary(dsm.mod)$dev.expl
 
 }
