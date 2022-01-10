@@ -6,6 +6,8 @@ library(Distance)
 library(dsm)
 library(dsims)
 
+#provided from
+#https://dieghernan.github.io/201905_Cast-to-subsegments/
 
 stdh_cast_substring <- function(x, to = "MULTILINESTRING") {
   ggg <- st_geometry(x)
