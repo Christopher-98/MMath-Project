@@ -12,35 +12,50 @@ dsm.sd <- sd(estimates$dsm.est)
 ds.sd <- sd(estimates$ds.est)
 
 
-# bootstrap confidence intervals
-N <- length(estimates$dsm.est)
-alpha <- 0.025                               # So confidence level is 100(1-2*alpha)=95%
-
-low <- round((N+1)*alpha)                    # Locate lower percentile (must be integer)
-high <- round((N+1)*(1-alpha))               # Locate upper percentile (must be integer)
-
-sorted.dsm.ests <- sort(estimates$dsm.est)
-sorted.ds.ests <- sort(estimates$ds.est)     # sort the estimates
-
-sorted.dsm.ests[c(low, high)]  # the estimated CI for dsm and ds
-sorted.ds.ests[c(low, high)]
-
-dsm.mean +c(-1, 1) *qnorm(0.975)*dsm.sd
-ds.mean+c(-1, 1) *qnorm(0.975)*ds.sd
-
 # calculate percentage bias
-(dsm.mean - 1000) / 1000 *100
-(ds.mean - 1000) / 1000 *100
+dsm.bias <- (dsm.mean - 1000) / 1000 *100
+ds.bias <- (ds.mean - 1000) / 1000 *100
 
 # need standard errors of dsm estimates?
-dsm.sd.mean <- mean(sqrt(estimates$dsm.var))
-
-
-ds.se.mean <- mean(estimates$ds.se)
+dsm.mean.se <- mean(estimates$dsm.se)
+ds.mean.se <- mean(estimates$ds.se)
 
 # coefficients of variation
 ds.cvs <- estimates$ds.se/estimates$ds.est
 summary(ds.cvs)
+ds.cv.mean <- mean(ds.cvs)
 
-dsm.cvs <- sqrt(estimates$dsm.var)/estimates$dsm.est
+dsm.cvs <- estimates$dsm.se/estimates$dsm.est
 summary(dsm.cvs)
+dsm.cv.mean <- mean(dsm.cvs)
+
+# Truth in confidence interval
+dsm.ci.coverage <- mean(estimates$dsm.ci.lo<1000 & estimates$dsm.ci.up > 1000)
+ds.ci.coverage <- mean(estimates$ds.ci.lo<1000 & estimates$ds.ci.up > 1000)
+
+dsm.results <- c(dsm.mean, 
+                 dsm.bias,
+                 dsm.mean.se,
+                 dsm.sd,
+                 dsm.cv.mean,
+                 dsm.ci.coverage)
+
+ds.results <- c(ds.mean, 
+                 ds.bias,
+                 ds.mean.se,
+                 ds.sd,
+                 ds.cv.mean,
+                 ds.ci.coverage)
+
+
+
+
+results <- cbind(dsm.results, ds.results) %>%
+  `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage')) %>%
+  `colnames<-`(c('DSM results', 'DS results'))
+
