@@ -3,11 +3,11 @@ source('Simulations/helper functions.R')
 
 # load appropriate region, design and density
 
-#source('Regions/default region.R')
+source('Regions/default region.R')
 
 #source('Regions/default region line.R')  
 
-source('Regions/default region line zigzag.R')
+#source('Regions/default region line zigzag.R')
 
 #source('Regions/North Sea region.R') 
 
@@ -25,18 +25,23 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 1,
+sim <- make.simulation(reps = 5,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
                        ds.analysis = analyses)
 
-estimates <- list(ds.est = c(rep(NA, sim@reps)),
-                  ds.se = c(rep(NA, sim@reps)),
-                  dsm.est = c(rep(NA, sim@reps)),
-                  dsm.var = c(rep(NA, sim@reps)),
-                  dsm.dev = c(rep(NA, sim@reps)),
-                  detections = c(NULL))
+estimates <- list(ds.est = vector(,sim@reps),
+                  ds.se = vector(,sim@reps),
+                  ds.ci.lo = vector(,sim@reps),
+                  ds.ci.up = vector(,sim@reps),
+                  dsm.est = vector(,sim@reps),
+                  dsm.var = vector(,sim@reps),
+                  dsm.dev = vector(,sim@reps),
+                  dsm.se = vector(,sim@reps),
+                  dsm.ci.lo = vector(,sim@reps),
+                  dsm.ci.up = vector(,sim@reps),
+                  detections = vector(,sim@reps))
 
 mods <- 0
 
@@ -120,6 +125,8 @@ for (j in 1:sim@reps) {
 	                     adjustment=NULL))
   estimates$ds.est[j] <- last(ds.mod$dht$individuals$N$Estimate)
   estimates$ds.se[j] <- last(ds.mod$dht$individuals$N$se)
+  estimates$ds.ci.lo[j] <- last(ds.mod$dht$individuals$N$lcl)
+  estimates$ds.ci.up[j] <- last(ds.mod$dht$individuals$N$ucl)
   
   # density model
   dsm.mod <- dsm(count~s(X, Y,k = sum(survey@transect@samp.count)),
@@ -140,14 +147,14 @@ for (j in 1:sim@reps) {
   dsm.sum <- summary(dsm.mod.var)
   
   ci.term <- exp(qnorm(1-0.05/2) * sqrt(log(1+dsm.sum$cv**2)))
-  dsm.ci <- c(dsm.sum$pred.est / asymp.ci.c.term,
-                 dsm.sum$pred.est * asymp.ci.c.term)
+  dsm.ci <- c(dsm.sum$pred.est / ci.term,
+                 dsm.sum$pred.est * ci.term)
   
   estimates$dsm.est[j] <- dsm.sum$pred.est
-  estimates$dsm.var[j] <- mod_tw_est$pred.var
+  estimates$dsm.var[j] <- dsm.mod.var$pred.var
   estimates$dsm.se[j] <- last(dsm.sum$se)
   estimates$dsm.ci.lo[j] <- dsm.ci[1]
-  estimates$dsm.ci.lo[j] <- dsm.ci[2]
+  estimates$dsm.ci.up[j] <- dsm.ci[2]
   estimates$dsm.dev[j] <- summary(dsm.mod)$dev.expl
 
 }
@@ -156,9 +163,8 @@ plot(survey)
 
 hist(estimates$dsm.est, breaks = 50)
 hist(estimates$ds.est, breaks = 50)
-hist(estimates$dsm.var, breaks = 50)
-hist(estimates$dsm.dev, breaks = 50)
-hist(estimates$detections, breaks = 50)
+
+sum(estimates$dsm.ci.lo<1000 & estimates$dsm.ci.up > 1000)
 
 mean(estimates$dsm.est)
 mean(estimates$ds.est)
@@ -167,13 +173,6 @@ mean(estimates$dsm.var)
 
 
 write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,transect.type,'.csv'))
-
-
-# for 100 sims without taking intersection of region and polygons
-# 1113.42
-# 996.4175
-
-# 
 
 sd(estimates$dsm.est)
 sd(estimates$ds.est)
