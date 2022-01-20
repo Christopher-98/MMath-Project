@@ -11,7 +11,8 @@ spacing: double
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 
 library(dsims)
-
+library(knitr)
+library(kableExtra)
 ```
 
 ## Notes
@@ -32,7 +33,7 @@ Potential example of use by simulation of making predictions outside survey area
 
 ## Introduction
 
-The aim of this report is to detail to extensions made to the 'dsims' R package through the integration of density surface modeling (dsm). Analysis will be undertaken to compare the abundance estimates generated through a design based approach, distance sampling, and the model based approach, density surface modelling, to ensure the validity of the integration. This integration will allow researchers the opportunity to run simulations on distance sampling designs while allowing abundance estimations for specific regions to be generated through the density surface model.
+The aim of this report is to detail to extensions made to the 'dsims' R package through the inclusion of density surface modelling (dsm). Analysis will be undertaken to compare the abundance estimates generated through a design based approach, distance sampling, and the model based approach, density surface modelling, to ensure the validity of the . By including the model based approach, this will allow researchers the opportunity to run simulations on distance sampling designs while allowing abundance estimations for specific regions to be generated through the density surface model.
 
 
 # Background research
@@ -126,11 +127,11 @@ plot(survey, main = 'Example Line zigzag transect survey')
 ```
 In the case of line transect designs, the transects are split to allow them to be modelled as points. Each transect is split into segments of approximate length $2w$ with _w_ being the truncation distance, as suggested by Miller et al 2013 and each segment assigned its own unique sample label. For Point transect designs, each point is treated as its own segment. The polygons of each segment is then created using the st_buffer command (sf package, ref required), using _w_ as the distance. This leads to squares of approximately $2w * 2w$ for line transects and circles of radius _w_ for points. These allow the area of each segment to be calculated, a requirement for the dsm model. This is calculated using st_area, on the intersection between the polygons and the study region, to ensure only areas within the study region are counted towards segment area. Failure to do this results in the areas of each segment being larger than they are in the survey, and as a result the dsm abundance estimate is smaller than true, since the prediction grid is only over the survey area. Once the segment areas have been calculated, they can be linked to the observation data by allocating each observation to the nearest segment and giving this the respective segments Sample label in the observation data, overwriting the original allocation.
 
-Based on this data, both a distance sampling model and density surface model are constructed, with the dsm modeling the counts against the smooth of spatial locations using a tweedie error distribution. In the smoothed term, the degrees of freedom is restricted to the total number of transects. The abundance estimates are extracted from both models and stored alongside the prediction variance and deviance explained from the dsm model. 
+Based on this data, both a distance sampling model and density surface model are constructed, with the dsm modeling the counts against the smooth of spatial locations using a tweedie error distribution. In the smoothed term, the degrees of freedom is restricted to the total number of transects. The abundance estimates are extracted from both models and stored alongside other values from each including the standard errors and confidence intervals for each model.
 
 ## Results
 
-Having completed 1000 bootstrap simulations for both the distance sampling and density surface models with each design, we can now examine and compare these to give us an insight into the circumstances under which a particular model is better of worse than the other.
+Having completed 1000 simulations for both the distance sampling and density surface models with each design, we can now examine and compare these to give us an insight into the circumstances under which a particular model is better of worse than the other.
 
 ### Default Region Point design
 
@@ -138,9 +139,13 @@ For the initial default region with the point transect design, the histograms of
 ```{r fig.show = 'hold', out.width='50%'}
 default.point <- read.csv('Estimates/region1000point.csv')
 
-hist(default.point$dsm.est,breaks = 50, main = 'Histogram of DSM estimates')
+hist(default.point$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
 abline(v = mean(default.point$dsm.est), col = 'red')
-hist(default.point$ds.est,breaks = 50, main = 'Histogram of DS estimates')
+hist(default.point$ds.est,breaks = 50,
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
 abline(v = mean(default.point$ds.est), col = 'red')
 ```
 
@@ -159,14 +164,8 @@ mean(default.point$ds.est) +c(-1, 1) *qnorm(0.975)*sd(default.point$ds.est)
 It can be seen that the mean of the dsm estimates appears to similar to the true population of 1000 while the distance sampling method is closer. Examining the confidence intervals for both methods, the interval for the dsm model is in this case slightly wider than that of the ds model, indicating it is slightly less accurate in the case of this region and density surface however this effect is very small.
 
 Next, we can evaluate how many times the true abundance, was within the 95% CI for every model computed.
-```{r}
-default.point.ci.lo <- default.point$dsm.est - qnorm(0.975)*sqrt(default.point$dsm.var)
-default.point.ci.up <- default.point$dsm.est + qnorm(0.975)*sqrt(default.point$dsm.var)
 
-default.point.truthinCI <- sum(default.point$dsm.est >= default.point.ci.lo & default.point$dsm.est <= default.point.ci.up)
-
-```
-With truth being in the 95% CI ```r default.point.truthinCI``` times out of 1000, we can conclude that the model is particularly good and containing truth within its estimated confidence interval. However, this could be due the the variance in each model being quite large resulting in wide confidence intervals. 
+With truth being in the 95% CI  times out of 1000, we can conclude that the model is particularly good and containing truth within its estimated confidence interval. However, this could be due the the variance in each model being quite large resulting in wide confidence intervals. 
 
 ### Default region parallel Line design
 
@@ -175,9 +174,14 @@ Now examining the results of the line transect design, on the same density surfa
 ```{r fig.show = 'hold', out.width='50%'}
 default.line <-  read.csv('Estimates/region1000line.csv')
 
-hist(default.line$dsm.est,breaks = 50, main = 'Histogram of DSM estimates')
+hist(default.line$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
 abline(v = mean(default.line$ds.est), col = 'red')
-hist(default.line$ds.est,breaks = 50, main = 'Histogram of DS estimates')
+
+hist(default.line$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
 abline(v = mean(default.line$ds.est), col = 'red')
 ```
 
@@ -194,13 +198,8 @@ mean(default.line$ds.est) +c(-1, 1) *qnorm(0.975)*sd(default.line$ds.est)
 These estimates are both very close to the true value, possibly as a result a large portion of the survey area being covered by the transects. The confidence intervals are also very similar, with the distance sampling interval being marginally smaller. 
 
 Next, we can evaluate how many times the true abundance, was within the 95% CI for every model computed.
-```{r}
-default.line.ci.lo <- default.line$dsm.est - qnorm(0.975)*sqrt(default.line$dsm.var)
-default.line.ci.up <- default.line$dsm.est + qnorm(0.975)*sqrt(default.line$dsm.var)
 
-default.line.truthinCI <- sum(default.line$dsm.est >= default.line.ci.lo & default.line$dsm.est <= default.line.ci.up)
-```
-With truth being in the 95% CI ```r default.line.truthinCI``` times out of 1000, we can conclude that the model is particularly good and containing truth within its estimated confidence interval. However, this could again be due the the variance in each model being quite large resulting in wide confidence intervals. 
+With truth being in the 95% CI  times out of 1000, we can conclude that the model is particularly good and containing truth within its estimated confidence interval. However, this could again be due the the variance in each model being quite large resulting in wide confidence intervals. 
 
 ### Default region Zigzag Line design
 
@@ -219,12 +218,9 @@ These plots differ slightly to their point and parallel line counterparts, with 
 ```{r}
 print('Mean of DSM estimates and associated 95% CI')
 mean(default.zig$dsm.est)
-mean(default.zig$dsm.est) +c(-1, 1) *qnorm(0.975)*sd(default.line$dsm.est)
-
 
 print('Mean of DS estimates and associated 95% CI')
 mean(default.zig$ds.est)
-mean(default.zig$ds.est) +c(-1, 1) *qnorm(0.975)*sd(default.line$ds.est)
 
 ```
 
@@ -237,4 +233,12 @@ default.zig.ci.up <- default.zig$dsm.est + qnorm(0.975)*sqrt(default.zig$dsm.var
 
 default.zig.truthinCI <- sum(default.zig$dsm.est >= default.zig.ci.lo & default.zig$dsm.est <= default.zig.ci.up)
 ```
-With truth being in the 95% CI ```r default.line.truthinCI``` times out of 1000, we can conclude that the model is particularly good and containing truth within its estimated confidence interval. However, this could again be due the the variance in each model being quite large resulting in wide confidence intervals.
+With truth being in the 95% CI  times out of 1000, we can conclude that the model is particularly good and containing truth within its estimated confidence interval. However, this could again be due the the variance in each model being quite large resulting in wide confidence intervals.
+
+```{r}
+results
+kable(results)
+#%>%
+ # add_header_above(c('Statistic' = 1, 'Point Design' = 2, 'Line design' = 2))
+
+```
