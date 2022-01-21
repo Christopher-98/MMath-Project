@@ -2,7 +2,7 @@
 
 # load appropriate estimates file
 
-estimates <- read.csv('Estimates/region1000point.csv')
+estimates <- read.csv('Estimates/Default1000line.csv')
 
 # calculate mean of each method
 dsm.mean <- mean(estimates$dsm.est)
@@ -50,12 +50,9 @@ ds.results <- c(ds.mean,
 
 
 
-results <- cbind(dsm.results, ds.results) %>%
-  `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
-                 'Confidence Interval Coverage')) %>%
-  `colnames<-`(c('DSM results', 'DS results'))
+results <- cbind(dsm.results, ds.results)
+write.csv(results, file = 'Estimates/results default 1000 zigzag.csv')
+
+
+
 
