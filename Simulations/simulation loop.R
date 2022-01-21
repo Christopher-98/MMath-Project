@@ -25,7 +25,7 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 5,
+sim <- make.simulation(reps = 10,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -164,15 +164,9 @@ plot(survey)
 hist(estimates$dsm.est, breaks = 50)
 hist(estimates$ds.est, breaks = 50)
 
-sum(estimates$dsm.ci.lo<1000 & estimates$dsm.ci.up > 1000)
+sum(estimates$dsm.ci.lo < 1000 & estimates$dsm.ci.up > 1000)
 
 mean(estimates$dsm.est)
 mean(estimates$ds.est)
 
-mean(estimates$dsm.var)
-
-
 write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,transect.type,'.csv'))
-
-sd(estimates$dsm.est)
-sd(estimates$ds.est)
