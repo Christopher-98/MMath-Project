@@ -1,15 +1,17 @@
 ---
 title: "Project"
 author: "Chris Martin"
-date: "05/01/2022"
+date: "`r Sys.Date()`"
 output: pdf_document
+
 fontsize: 12pt
 spacing: double
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
-                      message = FALSE)
+                      message = FALSE,
+                      warning = FALSE)
 
 library(dsims)
 library(knitr)
@@ -257,4 +259,12 @@ From the results table, despite the known issue, the DSM model performs relative
 #         `colnames<-`(rep(c('DSM results', 'DS results'),3))
 # kable(results) %>%
 #         add_header_above(c('Statistic' = 1, 'Point Design' = 2, 'Parallel Line Design' = 2, 'Zigzag Line Design' = 2))
+```
+
+# References {-}
+```{r generateBibliography, results="asis", echo=FALSE}
+require("knitcitations")
+cleanbib()
+options("citation_format" = "pandoc")
+read.bibtex(file = "Reports/references.bib")
 ```
