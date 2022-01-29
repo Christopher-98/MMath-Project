@@ -1,22 +1,34 @@
 # Script to produce all plots for report
 library(dsims)
 
-par(mfrow = c(1,3))
 detect_hn <- make.detectability()
 detect_hr <- make.detectability(key.function = 'hr', shape.param = 5)
 detect_uf <- make.detectability(key.function = 'uf', scale.param = 1)
 
 pop.desc <- make.population.description()
 
+jpeg("Reports/Report plots/hn detect func.jpeg")
 plot(detect_hn, pop.desc, main = 'hn detection function')
+dev.off()
+
+jpeg("Reports/Report plots/hr detect func.jpeg")
 plot(detect_hr, pop.desc, main = 'hr detection function')
+dev.off()
+
+jpeg("Reports/Report plots/uf detect func.jpeg")
 plot(detect_uf, pop.desc, main = 'uf detection function')
+dev.off()
 
+source('Regions/default region.R')
 
-source('default region.R')
-plot(density, region)# main = 'Basic density surface for Default region.')
+jpeg("Reports/Report plots/Default density.jpeg")
+plot(density)#, main = 'Basic density surface for Default region.')
+dev.off()
 
+jpeg("Reports/Report plots/Default detect.jpeg")
 plot(detect, pop.desc)
+dev.off()
+
 
 default.point <- read.csv('Estimates/region1000point.csv')
 
