@@ -7,25 +7,25 @@ detect_uf <- make.detectability(key.function = 'uf', scale.param = 1)
 
 pop.desc <- make.population.description()
 
-jpeg("Reports/Report plots/hn detect func.jpeg")
+jpeg("Reports/Plots/hn_detectfunc.jpg")
 plot(detect_hn, pop.desc, main = 'hn detection function')
 dev.off()
 
-jpeg("Reports/Report plots/hr detect func.jpeg")
+jpeg("Reports/Plots/hr_detectfunc.jpg")
 plot(detect_hr, pop.desc, main = 'hr detection function')
 dev.off()
 
-jpeg("Reports/Report plots/uf detect func.jpeg")
+jpeg("Reports/Plots/uf_detectfunc.jpg")
 plot(detect_uf, pop.desc, main = 'uf detection function')
 dev.off()
 
 source('Regions/default region.R')
 
-jpeg("Reports/Report plots/Default density.jpeg")
+jpeg("Reports/Plots/Default_density.jpg")
 plot(density)#, main = 'Basic density surface for Default region.')
 dev.off()
 
-jpeg("Reports/Report plots/Default detect.jpeg")
+jpeg("Reports/Plots/Default_detect.jpg")
 plot(detect, pop.desc)
 dev.off()
 
