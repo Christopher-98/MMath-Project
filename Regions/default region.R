@@ -49,6 +49,6 @@ sim <- make.simulation(reps = 1,
 
 survey <- run.survey(sim)
 
-jpeg("Reports/Report plots/Default survey point.jpeg")
+jpeg("Reports/Plots/Default survey point.jpg")
 plot(survey, main = 'Example Point transect survey')
 dev.off()
