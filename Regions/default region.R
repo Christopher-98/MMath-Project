@@ -4,7 +4,7 @@ library(dsims)
 # file to contain the basic region as a default with a point transect design
 # with 25 samplers
 
-region <- make.region()
+region <- make.region(region.name = 'Default region')
 
 density <- make.density(region = region, x.space = 25, constant = 1)
 
@@ -48,3 +48,7 @@ sim <- make.simulation(reps = 1,
 
 
 survey <- run.survey(sim)
+
+jpeg("Reports/Report plots/Default survey point.jpeg")
+plot(survey, main = 'Example Point transect survey')
+dev.off()

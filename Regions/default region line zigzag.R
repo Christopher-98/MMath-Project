@@ -52,3 +52,7 @@ sim <- make.simulation(reps = 1,
 
 
 survey <- run.survey(sim)
+
+jpeg("Reports/Report plots/Default survey zigzag.jpeg")
+plot(survey, main = 'Example Zigzag transect survey')
+dev.off()

@@ -49,3 +49,7 @@ sim <- make.simulation(reps = 1,
 
 
 survey <- run.survey(sim)
+
+jpeg("Reports/Report plots/Default survey line.jpeg")
+plot(survey, main = 'Example Line transect survey')
+dev.off()
