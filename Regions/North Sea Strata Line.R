@@ -18,12 +18,6 @@ design <- make.design(region = region,
                       design.angle = c(90,90),
                       truncation = design.trunc,
                       coverage.grid = cover)
-# region = region,
-#             transect.type = "line",
-#             design = c("eszigzagcom", "eszigzagcom"),
-#             spacing = c(60,60),
-#             design.angle = c(75, 170),
-#             bounding.shape = rep("convex.hull",2))
 
 samplers <- generate.transects(design, region)
 plot(region, samplers)
