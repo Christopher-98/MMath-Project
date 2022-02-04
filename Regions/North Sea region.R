@@ -5,7 +5,7 @@ library(dsims)
 
 #  change region to be north sea shapefile
 region <- make.region(region.name = "North Sea",
-                      shape = "RegionPrj.shp")
+                      shape = "Regions/RegionPrj.shp")
 
 cover <- make.coverage(region = region,
                        n.grid.points = 1000)
@@ -24,14 +24,10 @@ density <- make.density(region = region,
                         x.space = 25,
                         constant = 1)
 
-density <- add.hotspot(density,
-                       c(0, 600), 100, 3)
-density <- add.hotspot(density,
-                       c(100, 700), 300, 0.5)
-density <- add.hotspot(density,
-                       c(200, 900), 200, 1)
-density <- add.hotspot(density, 
-                       c(250, 350), 50, -0.5)
+density <- add.hotspot(density, c(0, 600), 100, 3)
+density <- add.hotspot(density, c(100, 700), 300, 0.5)
+density <- add.hotspot(density, c(200, 900), 200, 1)
+density <- add.hotspot(density, c(250, 350), 50, -0.5)
 
 plot(density, region)
 

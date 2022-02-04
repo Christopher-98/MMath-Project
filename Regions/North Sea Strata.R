@@ -3,7 +3,7 @@ library(dsims)
 # create region
 region <- make.region(region.name = "North Sea Strat",
                             strata.name = c('South', "North"),
-                            shape = "StrataPrj.shp")
+                            shape = "Regions/StrataPrj.shp")
 plot(region)
 
 design.trunc <- 10
@@ -26,10 +26,11 @@ density <- make.density(region = region,
                         x.space = 25,
                         constant = 1)
 
-density <- add.hotspot(density, c(0, 600), 100, 3)
+density <- add.hotspot(density, c(150, 400), 100, 3)
 density <- add.hotspot(density, c(100, 700), 300, 0.5)
-density <- add.hotspot(density, c(200, 900), 200, 1)
+density <- add.hotspot(density, c(200, 900), 200, 0.5)
 density <- add.hotspot(density, c(250, 350), 50, -0.5)
+density <- add.hotspot(density, c(-50, 700), 35, 1)
 
 plot(density, region)
 
