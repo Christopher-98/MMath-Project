@@ -247,6 +247,20 @@ From the results table, despite the known issue, the DSM model performs relative
 #         add_header_above(c('Statistic' = 1, 'Point Design' = 2, 'Parallel Line Design' = 2, 'Zigzag Line Design' = 2))
 ```
 
+# Modeling - North Sea
+
+Having gone through the process and results for the default region produced by dsims, a more complex example was created to further test the capabilities of the simulations with a real world example. This region with be in the area of the North sea off the east coast of the uk. As this would likely be a shipborne or airborne study, point transects are not realistic in this scenario, however they will be included for completeness. To assess the performance of both the distance sampling and density surface modelling approaches, point and line transect designs will be examined. These will be two point transect designs and four line transect designs, with one of each type using a stratified design with the region split in two. The standard designs will be compared first before examining the stratified designs. All designs used a truncation distance of 10 with the point transect designs aiming for xxx samplers and the line transects for 25 samplers. This difference is ensure the covered area of each study is similar to allow the results to be compared. The density maps for stratified and non-stratified will be identical, except for the addition of the stratification. These density surfaces can be seen in figure xx below.
+```{r crop = TRUE, fig.show='hold', out.width='50%'}
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North_Sea_density.jpg')))
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North_Sea_Strata_density.jpg')))
+
+```
+
+
+# Modeling - North Sea whales
+
+Having shown that the model performs adequatly with a complex study region, its performance in comparison to a real world study will be tested. This will be on the same study region as previously, however with a different density distribution to reflect the studies done on whales in the region in both 1994 and 2005 (insert studies info). 
+
 # References {-}
 
 ```{r generateBibliography, results="asis", echo=FALSE}
