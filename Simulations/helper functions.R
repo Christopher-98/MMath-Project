@@ -47,3 +47,29 @@ stdh_cast_substring <- function(x, to = "MULTILINESTRING") {
 
 # define last function to extract ds estimates is multiple strata used
 last <- function(x) {return(x[length(x)])}
+
+
+# given the argument fill (the covariate vector to use as the fill) and a name,
+# return a geom_polygon object
+# fill must be in the same order as the polygon data
+grid_plot_obj <- function(shape, fill, name){
+  
+  # what data were supplied?
+  names(fill) <- NULL
+  row.names(fill) <- NULL
+  data <- data.frame(fill)
+  names(data) <- name
+  
+  # ! need to give the right name of the shapefile
+  sp <- shape
+  spdf <- SpatialPolygonsDataFrame(sp, data)
+  spdf@data$id <- rownames(spdf@data)
+  spdf.points <- fortify(spdf, region="id")
+  spdf.df <- full_join(spdf.points, spdf@data, by="id")
+  
+  # store the x/y even when projected and labelled as "long" and "lat"
+  spdf.df$x <- spdf.df$long
+  spdf.df$y <- spdf.df$lat
+  
+  geom_polygon(aes_string(x="x",y="y",fill=name, group="group"), data=spdf.df)
+}
