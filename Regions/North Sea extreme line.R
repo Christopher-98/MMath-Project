@@ -1,6 +1,4 @@
- 
 
-library(dsm)
 library(dsims)
 
 # region to be north sea shape file
@@ -49,7 +47,7 @@ plot(detect, pop.desc)
 
 analyses <- make.ds.analysis(dfmodel = list(~1),
                              key = "hn",
-                             er.var = "R2",
+                             er.var = "S1",
                              truncation = design.trunc)
 
 sim <- make.simulation(reps = 1,
@@ -61,3 +59,4 @@ sim <- make.simulation(reps = 1,
 
 survey <- run.survey(sim)
 
+plot(survey)
