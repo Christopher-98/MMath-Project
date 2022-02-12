@@ -3,11 +3,11 @@ predgrid <- st_make_grid(st_bbox(region@region),
 
 predgrid <- st_intersection(predgrid, region@region)
 
-predgrid.poly <- st_as_sf(predgrid)
+predgrid <- st_as_sf(predgrid)
 
-predgrid.poly$area <- as.numeric(st_area(predgrid.poly))
+predgrid$area <- as.numeric(st_area(predgrid))
 
-predgrid <- st_centroid(predgrid.poly)
+predgrid <- st_centroid(predgrid)
 
 preddata <- cbind(as.data.frame(st_drop_geometry(predgrid)),
                   st_coordinates(predgrid))
