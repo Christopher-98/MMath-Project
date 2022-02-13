@@ -3,7 +3,7 @@ source('Simulations/helper functions.R')
 
 # load appropriate region, design and density
 
-source('Regions/default region.R')
+#source('Regions/default region.R')
 
 #source('Regions/default region line.R')  
 
@@ -19,13 +19,17 @@ source('Regions/default region.R')
 
 #source('Regions/North Sea Strata Line zigzag.R') 
 
+#source('Regions/North Sea extreme Line.R') 
+
+source('Regions/North Sea Break Line.R') 
+
 source('Simulations/prediction grid.R')
 
 # set transect type based on survey design
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 10,
+sim <- make.simulation(reps = 100,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -158,15 +162,15 @@ for (j in 1:sim@reps) {
   estimates$dsm.dev[j] <- summary(dsm.mod)$dev.expl
 
 }
+
+
+plot(dsm)
 plot(survey, region)
-plot(survey)
 
 hist(estimates$dsm.est, breaks = 50)
 hist(estimates$ds.est, breaks = 50)
 
-sum(estimates$dsm.ci.lo < 1000 & estimates$dsm.ci.up > 1000)
-
 mean(estimates$dsm.est)
 mean(estimates$ds.est)
 
-write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,transect.type,'.csv'))
+write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,transect.type,'extreme.csv'))
