@@ -44,3 +44,18 @@ analyses <- make.ds.analysis(dfmodel = list(~1),
                              key = detect@key.function,
                              er.var = "P3",
                              truncation = design.trunc)
+
+sim <- make.simulation(reps = 1,
+                       design = design,
+                       population.description = pop.desc,
+                       detectability = detect,
+                       ds.analysis = analyses)
+
+
+survey <- run.survey(sim)
+plot(survey)
+
+jpeg("Reports/Plots/North Sea survey point.jpg")
+plot(survey)
+dev.off()
+

@@ -5,7 +5,7 @@ library(dsims)
 
 # region to be north sea shape file
 region <- make.region(region.name = "North Sea",
-                      shape = "RegionPrj.shp")
+                      shape = "Regions/RegionPrj.shp")
 
 cover <- make.coverage(region = region,
                        n.grid.points = 1000)
@@ -49,6 +49,20 @@ analyses <- make.ds.analysis(dfmodel = list(~1),
                              key = "hn",
                              er.var = "R2",
                              truncation = design.trunc)
+
+sim <- make.simulation(reps = 1,
+                       design = design,
+                       population.description = pop.desc,
+                       detectability = detect,
+                       ds.analysis = analyses)
+
+
+survey <- run.survey(sim)
+plot(survey)
+
+jpeg("Reports/Plots/North Sea survey line.jpg")
+plot(survey)
+dev.off()
 
 
 
