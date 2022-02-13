@@ -169,7 +169,7 @@ default.line <-  read.csv('Estimates/region1000line.csv')
 hist(default.line$dsm.est,breaks = 50,
      main = 'Histogram of DSM estimates',
      xlab = 'DSM Abundance estimates')
-abline(v = mean(default.line$ds.est), col = 'red')
+abline(v = mean(default.line$dsm.est), col = 'red')
 
 hist(default.line$ds.est,breaks = 50, 
      main = 'Histogram of DS estimates',
@@ -255,11 +255,82 @@ plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North_Sea_density.jpg'
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North_Sea_Strata_density.jpg')))
 
 ```
+As before, the detection function was kept identical between each design for both stratified and non-stratified. In this case it was a Half Normal detection function with a scale parameter of 5, which can be seen in Figure xxx below:
+```{r out.width='75%', fig.align='center'}
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North Sea Detect.jpg')))
+```
+### Non-Stratified Designs
+
+All non-stratified designs used a truncation distance of 10 with the point transect designs aiming for xxx samplers and the line transects for 25 samplers. This difference is ensure the covered area of each study is similar to allow the results to be compared. The standard line designs consisted of a systematic parallel line design with transects perpendicular to the coast and a zigzag line design originating in the North of the region. An example of each design, including the point design, can be seen in figure xxx below:
+```{r fig.show = 'hold', out.width='33%'}
+knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey point.jpg'))
+knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey line.jpg'))
+knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey zigzag.jpg'))
+```
+
+As before, the simulation was run 5000 times with the dsm model using a tweedie error distribution.
+
+### Non Stratifed Results
+
+For the point transect design, the histograms of the estimates for each simulaltion run are displayed below in figure xxx:
+```{r fig.show = 'hold', out.width='50%'}
+NS.point <-  read.csv('Estimates/North Sea1000line.csv')
+
+hist(NS.point$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(NS.point$dsm.est), col = 'red')
+
+hist(NS.point$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(NS.point$ds.est), col = 'red')
+```
 
 
-# Modeling - North Sea whales
 
-Having shown that the model performs adequatly with a complex study region, its performance in comparison to a real world study will be tested. This will be on the same study region as previously, however with a different density distribution to reflect the studies done on whales in the region in both 1994 and 2005 (insert studies info). 
+Now examining the results of the line transect design, on the same density surface, we see the histograms of the two estimates below:
+
+```{r fig.show = 'hold', out.width='50%'}
+NS.line <-  read.csv('Estimates/North Sea5000line.csv')
+
+hist(NS.line$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(NS.line$dsm.est), col = 'red')
+
+hist(NS.line$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(NS.line$ds.est), col = 'red')
+```
+
+These plots are very similar to their point transect counterparts, with the mean for each signified by the red line appearing very close to truth. Investigating this further, we find the mean of DSM estimates to be `r round(mean(NS.line$dsm.est),2) ` and the mean of DS estimates to be `r round(mean(NS.line$ds.est),2)`. These estimates are both very close to the true value, possibly as a result a large portion of the survey area being covered by the transects.
+``` {r }
+results.line <- read.csv('Estimates/results NS 5000 line.csv')
+
+results.line$X <- NULL
+
+results.line <-  results.line %>%
+        `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage')) %>%
+        `colnames<-`(c('DSM results', 'DS results'))
+kable(results.line) %>%
+        add_header_above(c('Statistic' = 1, 'Parallel Line Design' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "hold_position")
+```
+From the results table above, it can be observed that in this case, the DSM method overall performed better than the DS method, having a slightly smaller bias as well as a dramatically smaller mean standard error and mean coefficient of variation. However, for the DS method, the standard deviation of the estimates is markedly less than the mean standard error, indicating this method provides better precision than the standard errors suggest. This is also the case with the DSM method however the difference is far smaller. The DS method also has a higher probability of truth being contained within its confidence intervals, at `r results.line[6,2]` compared to `r results.line[6,1]`.
+
+
+
+### Stratified Designs
+
+For the stratified designs, it was decided to split the region into two strata, a large northern strata 'North' and a smaller southern strata 'South' to test how the simulation and both methods cope with a stratified design. 
 
 # References {-}
 

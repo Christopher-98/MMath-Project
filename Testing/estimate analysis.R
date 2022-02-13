@@ -2,7 +2,7 @@
 
 # load appropriate estimates file
 
-estimates <- read.csv('Estimates/Default1000line.csv')
+estimates <- read.csv('Estimates/North Sea1000point.csv')
 
 # calculate mean of each method
 dsm.mean <- mean(estimates$dsm.est)
@@ -51,7 +51,7 @@ ds.results <- c(ds.mean,
 
 
 results <- cbind(dsm.results, ds.results)
-write.csv(results, file = 'Estimates/results default 1000 zigzag.csv')
+write.csv(results, file = 'Estimates/results NS 1000 point.csv')
 
 
 
