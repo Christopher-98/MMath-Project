@@ -1,8 +1,7 @@
-library(dsm)
 library(dsims)
 
 # file to contain the basic region as a default with a point transect design
-# with 25 samplers
+# with 30 samplers
 
 region <- make.region(region.name = 'Default region')
 
@@ -23,7 +22,7 @@ design.trunc = 60
 
 design <- make.design(region = region,
                       transect.type = "point",
-                      samplers = 25,
+                      samplers = 35,
                       truncation = design.trunc)
 
 samplers <- generate.transects(design, region)
@@ -48,6 +47,7 @@ sim <- make.simulation(reps = 1,
 
 
 survey <- run.survey(sim)
+plot(survey)
 
 jpeg("Reports/Plots/Default survey point.jpg")
 plot(survey, main = 'Example Point transect survey')
