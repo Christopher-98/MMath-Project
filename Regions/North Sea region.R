@@ -55,7 +55,7 @@ sim <- make.simulation(reps = 1,
 survey <- run.survey(sim)
 plot(survey)
 
-jpeg("Reports/Plots/North Sea survey point.jpg")
-plot(survey)
-dev.off()
+# jpeg("Reports/Plots/North Sea survey point.jpg")
+# plot(survey)
+# dev.off()
 
