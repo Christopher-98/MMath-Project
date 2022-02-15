@@ -1,4 +1,3 @@
-library(dsm)
 library(dsims)
 
 # file to contain the basic region as a default with a point transect design

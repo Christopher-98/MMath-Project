@@ -3,7 +3,7 @@ library(dsims)
 # file to contain the basic region as a default with a point transect design
 # with 30 samplers
 
-region <- make.region(region.name = 'Default region')
+region <- make.region(region.name = 'Default')
 
 density <- make.density(region = region, x.space = 25, constant = 1)
 

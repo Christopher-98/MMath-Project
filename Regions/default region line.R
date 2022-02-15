@@ -1,10 +1,9 @@
-library(dsm)
 library(dsims)
 
 # file to contain the basic region as a default with a point transect design
 # with 25 samplers
 
-region <- make.region()
+region <- make.region(region.name = 'Default')
 
 design.trunc = 60
 
