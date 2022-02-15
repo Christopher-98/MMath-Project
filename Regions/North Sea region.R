@@ -12,7 +12,7 @@ cover <- make.coverage(region = region,
 design.trunc = 10
 design <- make.design(region = region,
                       transect.type = "point",
-                      samplers = 40,
+                      samplers = 70,
                       truncation = design.trunc,
                       coverage.grid = cover)
 
