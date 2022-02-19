@@ -14,7 +14,7 @@ cover <- make.coverage(region = region,
 design <- make.design(region = region,
                       transect.type = "point",
                       bounding.shape = rep("convex.hull",2),
-                      samplers = c(15, 10),
+                      samplers = c(30, 30),
                       truncation = design.trunc,
                       coverage.grid = cover)
 
@@ -23,7 +23,7 @@ plot(region, samplers)
 
 
 density <- make.density(region = region,
-                        x.space = 25,
+                        x.space = 5,
                         constant = 1)
 
 density <- add.hotspot(density, c(150, 400), 100, 3)
