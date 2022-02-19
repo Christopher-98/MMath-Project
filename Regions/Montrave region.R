@@ -1,76 +1,95 @@
-library(dsims)
+library(DSsim)
 
-# file to contain the appropriate shapfile and design for the unstratified
-# north sea region with a point transect design
 
-#  change region to be north sea shapefile
-region <- make.region(region.name = "Montrave",
-                      shape = "Regions/Region.shp")
+library(shapefiles)
+region.shapefile <- read.shapefile("Regions/DSsim_study/Region")
 
-cover <- make.coverage(region = region,
-                       n.grid.points = 1000)
+region <- make.region(region.name = "Montrave", units = "m", shapefile = region.shapefile)
+
+
 design.trunc = 1000
-design <- make.design(region = region,
-                      transect.type = "point",
-                      samplers = 50,
-                      truncation = design.trunc,
-                      coverage.grid = cover)
 
-samplers <- generate.transects(design, region)
-plot(region, samplers)
-
-
+load("Regions/DSsim_study/density.surface.robj")
 density <- make.density(region = region,
+                        density.surface = density.surface,
                         x.space = 1000,
-                        y.space = 1000,
-                        constant = 1)
+                        y.space = 1000)
 
-density <- add.hotspot(density, c(0, 2200000), 10000, 3)
-density <- add.hotspot(density, c(-10000, 2230000), 5000, 2)
-density <- add.hotspot(density, c(-40000, 2250000), 5000, 3)
-density <- add.hotspot(density, c(50000, 2185000), 10000, 3)
-density <- add.hotspot(density, c(10000, 2165000), 5000, 2)
-density <- add.hotspot(density, c(25000, 2210000), 7500, 3)
-density <- add.hotspot(density, c(-25000, 2205000), 7500, -0.75)
-density <- add.hotspot(density, c(-45000, 2270000), 5000, -0.5)
-density <- add.hotspot(density, c(20000, 2180000), 5000, -0.5)
-density <- add.hotspot(density, c(-45000, 2270000), 10000, -0.35)
 
-# Extract density values 
-densities <- get.densities(density)
-# Shift the values down so minimum density values are 0 (no scaling required)
-min.d <- min(densities)
-densities <- densities-min.d
-# Put adjusted densities back in density grid
-density <- set.densities(density, densities)
 
-plot(density, region)
+plot(density,region)
 
-pop.desc <- make.population.description(region = region,
-                                        density = density,
-                                        N=1000)
+pop.desc <- make.population.description(region.obj = region,
+                                        density.obj = density,
+                                        N = 1500,
+                                        fixed.N = TRUE)
+
 
 detect <- make.detectability(key.function = "hn",
                              scale.param = 500,
                              truncation = design.trunc)
 plot(detect, pop.desc)
 
+
+
+new.directory <- paste(getwd(), "Regions/DSsim_study/Survey_Transects/Subjective_Design",sep = "/")
+design <- DSsim::make.design(transect.type = "Line",
+                             design.details = c("user specified"),
+                             region = region,
+                             plus.sampling = FALSE,
+                             path = new.directory)
+design@filenames
+
+
+ddf.analyses <- make.ddf.analysis.list(dsmodel = list(~cds(key = "hn", formula = ~1), #half-normal model
+                                                      ~cds(key = "hr", formula = ~1)), #hazard-rate model
+                                       method = "ds",
+                                       criteria = "AIC",
+                                       truncation = design.trunc)
+
+
+sim<- make.simulation(reps = 1,
+                      single.transect.set = TRUE,
+                      region.obj = region,
+                      design.obj = design,
+                      population.description.obj = pop.desc,
+                      detectability.obj = detect,
+                      ddf.analyses.list = ddf.analyses)
+
+
+
+# set the display window up for 4 plots
+par(mfrow = c(2, 2))
+# generate and plot and example population
+pop <- generate.population(sim)
+plot(region)
+plot(pop)
+# generate (or rather load from file) the transects
+transects <- generate.transects(sim)
+plot(region)
+plot(transects)
+# simulate the survey process of detection
+survey <- create.survey.results(sim)
+plot(survey)
+# have a look at the distance data from the simulated survey
+dist.data <- get.distance.data(survey)
+hist(dist.data$distance, xlab = "Distance (m)", main = "Distance Data")
+
+par(mfrow = c(1, 1))
+
+dsims::run.survey(sim, region)
+
+my.simulation.subjective.run <- run(sim)
+
 analyses <- make.ds.analysis(dfmodel = list(~1),
                              key = detect@key.function,
                              er.var = "P3",
                              truncation = design.trunc)
 
-sim <- make.simulation(reps = 1,
+
+sim <- dsims::make.simulation(reps = 1,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
-                       ds.analysis = analyses)
-
-
-survey <- run.survey(sim)
-plot(survey)
-
-jpeg("Reports/Plots/North Sea survey point.jpg")
-plot(survey)
-dev.off()
+                       ds.analysis = ddf.analyses)
 
