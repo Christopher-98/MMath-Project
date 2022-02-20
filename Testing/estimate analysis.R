@@ -1,4 +1,5 @@
 # simulation analysis
+library(moments)
 
 # load appropriate estimates file
 
@@ -33,25 +34,36 @@ dsm.cv.mean <- mean(dsm.cvs)
 dsm.ci.coverage <- mean(estimates$dsm.ci.lo<1000 & estimates$dsm.ci.up > 1000)
 ds.ci.coverage <- mean(estimates$ds.ci.lo<1000 & estimates$ds.ci.up > 1000)
 
+# Skewness and Kurtosis of estimates
+dsm.skew <- skewness(estimates$dsm.est)
+dsm.kur <- kurtosis(estimates$dsm.est)
+
+ds.skew <- skewness(estimates$ds.est)
+ds.kur <- kurtosis(estimates$ds.est)
+
 dsm.results <- c(dsm.mean, 
                  dsm.bias,
                  dsm.mean.se,
                  dsm.sd,
                  dsm.cv.mean,
-                 dsm.ci.coverage)
+                 dsm.ci.coverage,
+                 dsm.skew,
+                 dsm.kur)
 
 ds.results <- c(ds.mean, 
-                 ds.bias,
-                 ds.mean.se,
-                 ds.sd,
-                 ds.cv.mean,
-                 ds.ci.coverage)
+                ds.bias,
+                ds.mean.se,
+                ds.sd,
+                ds.cv.mean,
+                ds.ci.coverage,
+                ds.skew,
+                ds.kur)
 
 
 
 
 results <- cbind(dsm.results, ds.results)
-write.csv(results, file = 'Estimates/results NS 5000 zigzag.csv')
+write.csv(results, file = 'Results/results NS 5000 zigzag.csv')
 
 
 
