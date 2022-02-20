@@ -9,15 +9,17 @@ source('Simulations/helper functions.R')
 
 #source('Regions/default region line zigzag.R')
 
-#source('Regions/North Sea region.R') 
-
-#source('Regions/North Sea Strata.R') 
+#source('Regions/North Sea region.R')
 
 #source('Regions/North Sea region Line.R')
 
-source('Regions/North Sea Strata Line.R') 
+#source('Regions/North Sea region Line zigzag.R')
 
-#source('Regions/North Sea Strata Line zigzag.R') 
+#source('Regions/North Sea Strata.R')
+
+#source('Regions/North Sea Strata Line.R') 
+
+source('Regions/North Sea Strata Line zigzag.R') 
 
 #source('Regions/North Sea extreme Line.R') 
 
@@ -31,7 +33,7 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 5000,
+sim <- make.simulation(reps = 1000,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -174,4 +176,4 @@ hist(estimates$ds.est, breaks = 50)
 mean(estimates$dsm.est)
 mean(estimates$ds.est)
 
-write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,transect.type,'.csv'))
+#write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,transect.type,'.csv'))
