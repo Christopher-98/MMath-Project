@@ -2,10 +2,13 @@
 title: "Project"
 author: "Chris Martin"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: 
+        bookdown::pdf_document2:
 
 fontsize: 12pt
 spacing: double
+bibliography: references.bib
+link-citations: true
 ---
 
 ```{r setup, include=FALSE}
@@ -18,6 +21,7 @@ library(dsims)
 library(knitr)
 library(kableExtra)
 library(dplyr)
+library(moments)
 ```
 
 ## Notes
@@ -37,16 +41,16 @@ The aim of this report is to detail to extensions made to the 'dsims' R package 
 
 # Background research
 
-Informed from Buckland et al 2015
+Informed from @Buckland2015
 One of the key aims in areas of applied ecological research is to determine the abundance of a particular population of interest, such as in a periodic way to monitor its development over time and determine changes, or to evaluate the potential effect of a new factor, such as a human disturbance. The size of the population can determine the importance of any new factors, with a smaller populations more under threat from a given factor compared to an abundant one. One option for determining a populations size is to count every single individual, known as a census, similar to the UK completing a Census of its population every 10 years.
 However, in the natural world, this is only realistically possible in the simplest instances and therefore a different approach must be used. Researches often use some form of sampling method to conduct a sample of the target population and draw conclusions for the overall population based on this sample.
 
 The two most common methods of sampling for ecological populations are Mark-recapture and distance sampling, where information on the detectability of animals comes from the capture histories of individuals or the distances at which observations are made respectively. Mark and recapture methods, while important, are not the focus of this report and hence will not be further discussed. 
 
-Distance sampling was first introduced by Buckland et al. 1993 and includes a variety of techniques such  as line and point transect sampling, which can then be used to estimate animal abundance using information on the distances to the individuals or clusters observed. The underpinning theory is that if the probability of animal detection can be estimated based on the sample observed, this can allow for estimates on how many animals were not observed and can therefore correct the abundance estimates to take this information into account. 
+Distance sampling was first introduced by @Buckland1993 and includes a variety of techniques such  as line and point transect sampling, which can then be used to estimate animal abundance using information on the distances to the individuals or clusters observed. The underpinning theory is that if the probability of animal detection can be estimated based on the sample observed, this can allow for estimates on how many animals were not observed and can therefore correct the abundance estimates to take this information into account. 
 
 The two simple techniques of distance sampling are, as mentioned above, line transect sampling and point transect sampling, with subsequent more complex techniques being extensions of these in one aspect or another. 
-Line transect sampling consists of a set of lines being placed over a study area by some predetermined method, for example systematic with regular spacing between each or randomly generated. The observer moves along each line, known as a transect, looking for animals or animal groups, referred to as clusters. These are defined by Buckland et al. 2015 as "a group of animals with a well defined location for the group centre." For any animal or cluster the observer detects at they make their way along each transect, the observer estimates or calculates the perpendicular distance _x_ of the animal or cluster from the nearest point of the line. 
+Line transect sampling consists of a set of lines being placed over a study area by some predetermined method, for example systematic with regular spacing between each or randomly generated. The observer moves along each line, known as a transect, looking for animals or animal groups, referred to as clusters. These are defined by @Buckland2015 as "a group of animals with a well defined location for the group centre." For any animal or cluster the observer detects at they make their way along each transect, the observer estimates or calculates the perpendicular distance _x_ of the animal or cluster from the nearest point of the line. 
 For point transect sampling, the transects are a set of points placed over the study area, with different placement methods available as with line transects, however, most common is a systematically spaced grid. At each point, the observer records any individuals or clusters observed from the point, along with the distance _r_ from the point at which the observation was made. 
 
 Distance sampling can therefore be thought of as a method of plot sampling, with the additional factor of not every animal on the plots being observed. For this, the plots in line transect sampling are rectangles of dimension $2wl$, where _l_ is the length of a given transect and may change between transects depending on the survey design and area shape, and _w_ is the truncation distance. This is the distance from the line, beyond which observations are not recorded if the truncation distance is determined prior to the study. However, if the truncation distance is determined during the analysis phase, then this is the distance beyond which the observations are excluded from the analysis. For the plots in point transect sampling, these are circles of area $\pi w^2$ with the plot radius _w_ being the truncation distance.
@@ -57,7 +61,7 @@ To take into account the fact that not all animals or clusters within each trans
 
 ## Distance Sampling Simulations
 
-All the material in this section is based on Buckland et al (2015) Prior to the simulation for a particular design being run, a number of objects must be first be defined. The first object is the study region, this can either be the default generated by R or user defined from a shapefile. Following this, a spatial distribution or density surface must be defined, from which animal locations can be generated based on the population description. The desired population size can be user defined and set for a series of simulations or be generated based on the spatial distribution supplied by the user. The desired truncation distance must then be defined and based on this an appropriate design can be generated. The main considerations when constructing the design are the type, either line or point transects and the desired number or length of transects. If line transects are used, the design angle may be altered from its default of 0. Based on the design, a set of survey transects can be generated, during which the detection process is simulated. The user can then define a detection function, based on either a half normal ('hn'), hazard rate ('hr') or uniform distribution ('uf') with a defined scale parameter and the desired truncation distance _w_, examples of which can be seen below:
+All the material in this section is based on @Buckland2015 Prior to the simulation for a particular design being run, a number of objects must be first be defined. The first object is the study region, this can either be the default generated by R or user defined from a shapefile. Following this, a spatial distribution or density surface must be defined, from which animal locations can be generated based on the population description. The desired population size can be user defined and set for a series of simulations or be generated based on the spatial distribution supplied by the user. The desired truncation distance must then be defined and based on this an appropriate design can be generated. The main considerations when constructing the design are the type, either line or point transects and the desired number or length of transects. If line transects are used, the design angle may be altered from its default of 0. Based on the design, a set of survey transects can be generated, during which the detection process is simulated. The user can then define a detection function, based on either a half normal ('hn'), hazard rate ('hr') or uniform distribution ('uf') with a defined scale parameter and the desired truncation distance _w_, examples of which can be seen below:
 ```{r fig.show = 'hold', out.width='33%'}
 include_graphics(paste0(getwd(),"/Reports/Plots/hn_detectfunc.jpg"))
 include_graphics(paste0(getwd(),"/Reports/Plots/hr_detectfunc.jpg"))
@@ -67,8 +71,8 @@ Therefore for an animal at distance _x_ from the closest transect the probabilit
 
 ## Density Surface Modelling
 
-This sections contains material based on D.L.Miller et al 2013.
-In order to construct a density surface model, initial the approach must be decided upon. The choice is between using a two stage approach, whereby the detection function is fitted first then subsequently fitting a spatial model, while the one stage approach leads to estimating the detection and spatial parameters simultaneously. Miller et al states that 'Generally, very little information is lost by taking the two stage approach' as transect width is comparably smaller than that of the study region, therefore, provide the population does not differ spatially within the transect, no information is lost by the two stage approach. This may lead is issues occurring where the density of the species has significant variability at the transect level. However, one drawback of the two stage model is that, to accurately evaluate the model uncertainty, the uncertainty in both the detection function and the spatial models should be suitably combined. For the remainder of this report only the two stage approach will be discussed. Initially, the detection function must be fitted, with the specification being the same as mentioned in the distance sampling section above. Following this, the density surface model can be fitted. To enable this to occur, the data must be separated into segments. This is easily done for point transects with each point being a segment however it more complicated for line transects. With line transects, they must be split up into J segments of length $l_j$. It is normally from the segments to be approximately square, with dimensions of 2 _w_ x 2 _w_ where _w_ is the truncation distance of the design. From here, the segment areas enter the model as part of an offset, to allow for non-constant segment areas. This leads the line transect segments to have an area of 2$wl_j$ and the point transect segments with an area of $\pi w^2$. In the model, the counts or abundances are using a generalised additive model (GAM) using the sum of the smoothed covariates. 
+This sections contains material based on @Miller2013.
+In order to construct a density surface model, initial the approach must be decided upon. The choice is between using a two stage approach, whereby the detection function is fitted first then subsequently fitting a spatial model, while the one stage approach leads to estimating the detection and spatial parameters simultaneously. @Miller2013 states that 'Generally, very little information is lost by taking the two stage approach' as transect width is comparably smaller than that of the study region, therefore, provide the population does not differ spatially within the transect, no information is lost by the two stage approach. This may lead is issues occurring where the density of the species has significant variability at the transect level. However, one drawback of the two stage model is that, to accurately evaluate the model uncertainty, the uncertainty in both the detection function and the spatial models should be suitably combined. For the remainder of this report only the two stage approach will be discussed. Initially, the detection function must be fitted, with the specification being the same as mentioned in the distance sampling section above. Following this, the density surface model can be fitted. To enable this to occur, the data must be separated into segments. This is easily done for point transects with each point being a segment however it more complicated for line transects. With line transects, they must be split up into J segments of length $l_j$. It is normally from the segments to be approximately square, with dimensions of 2 _w_ x 2 _w_ where _w_ is the truncation distance of the design. From here, the segment areas enter the model as part of an offset, to allow for non-constant segment areas. This leads the line transect segments to have an area of 2$wl_j$ and the point transect segments with an area of $\pi w^2$. In the model, the counts or abundances are using a generalised additive model (GAM) using the sum of the smoothed covariates. 
 
 ### Response models
 
@@ -81,7 +85,7 @@ Where $f_k$ are the smoothed functions of the covariates and $\beta_0$ is the in
 An alternative to using this is to use abundance estimates for each segment generated by distance sampling as the response. To do this, the response $n_j$ is replaced by an estimator of the abundance in each section, $\hat{N_j}$ where this is defined as: 
 $$ \hat{N_j} = \sum_{r = 1}^{R_j}  \frac{s_{jr}}{\hat{p_j}}$$
 
-Where $R_j$ is the number of observations in the jth segment and $s_{jr}$ is the size of the rth group observed, with this being 1 if only individuals are observed. As identified by Buckland et al 2015, this is an Horvitz–Thompson-like estimator of the segment abundance, allowing for covariates to be included through $\hat{p_j}$. The fitted model then becomes:
+Where $R_j$ is the number of observations in the jth segment and $s_{jr}$ is the size of the rth group observed, with this being 1 if only individuals are observed. As identified by @Buckland2015, this is an Horvitz–Thompson-like estimator of the segment abundance, allowing for covariates to be included through $\hat{p_j}$. The fitted model then becomes:
 $$ \mathbb{E}(\hat{N_j}) = A_jexp [ \, \beta_0 + \sum_k f_k(z_{jk} ) ]\, $$
 Where the model follows the same three distributions as before. The main difference between these models is that the offset is now the physical area of each segment, as opposed to the effective area in the first model for $n_j$.
 
@@ -101,7 +105,7 @@ A population description was then constructed based on this density surface with
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default_detect.jpg')))
 ```
 
-A prediction grid is then constructed across the study region and is identical for each simulation iteration, with the resolution of the grid set at the truncation distance of the design. As Miller et al noted, smaller cells sizes could be used but there is a limit since using cells smaller than the spatial data resolution will not have an effect on the abundance estimates provided by dsm, and there is also the computational increase resulting from smaller cell sizes.
+A prediction grid is then constructed across the study region and is identical for each simulation iteration, with the resolution of the grid set at the truncation distance of the design. As @Miller2013 noted, smaller cells sizes could be used but there is a limit since using cells smaller than the spatial data resolution will not have an effect on the abundance estimates provided by dsm, and there is also the computational increase resulting from smaller cell sizes.
 
 The simulation loop then begins. For each iteration, a new survey constructed. From this, the observation data and segmented data is extracted. An example survey for each of the designs is displayed below:
 ```{r fig.show = 'hold', out.width='33%'}
@@ -109,7 +113,7 @@ knitr::include_graphics(paste0(getwd(),'/Reports/Plots/Default survey point.jpg'
 knitr::include_graphics(paste0(getwd(),'/Reports/Plots/Default survey line.jpg'))
 knitr::include_graphics(paste0(getwd(),'/Reports/Plots/Default survey zigzag.jpg'))
 ```
-In the case of line transect designs, the transects are split to allow them to be modelled as points. Each transect is split into segments of approximate length $2w$ with _w_ being the truncation distance, as suggested by Miller et al 2013 and each segment assigned its own unique sample label. For Point transect designs, each point is treated as its own segment. The polygons of each segment is then created using the st_buffer command (sf package, ref required), using _w_ as the distance. This leads to squares of approximately $2w * 2w$ for line transects and circles of radius _w_ for points. These allow the area of each segment to be calculated, a requirement for the dsm model. This is calculated using st_area, on the intersection between the polygons and the study region, to ensure only areas within the study region are counted towards segment area. Failure to do this results in the areas of each segment being larger than they are in the survey, and as a result the dsm abundance estimate is smaller than true, since the prediction grid is only over the survey area. Once the segment areas have been calculated, they can be linked to the observation data by allocating each observation to the nearest segment and giving this the respective segments Sample label in the observation data, overwriting the original allocation.
+In the case of line transect designs, the transects are split to allow them to be modelled as points. Each transect is split into segments of approximate length $2w$ with _w_ being the truncation distance, as suggested by @Miller2013 and each segment assigned its own unique sample label. For Point transect designs, each point is treated as its own segment. The polygons of each segment is then created using the st_buffer command @R-sf, using _w_ as the distance. This leads to squares of approximately $2w * 2w$ for line transects and circles of radius _w_ for points. These allow the area of each segment to be calculated, a requirement for the dsm model. This is calculated using st_area, on the intersection between the polygons and the study region, to ensure only areas within the study region are counted towards segment area. Failure to do this results in the areas of each segment being larger than they are in the survey, and as a result the dsm abundance estimate is smaller than true, since the prediction grid is only over the survey area. Once the segment areas have been calculated, they can be linked to the observation data by allocating each observation to the nearest segment and giving this the respective segments Sample label in the observation data, overwriting the original allocation.
 
 Based on this data, both a distance sampling model and density surface model are constructed, with the dsm modeling the counts against the smooth of spatial locations using a tweedie error distribution. In the smoothed term, the degrees of freedom is restricted to the total number of transects. The abundance estimates are extracted from both models and stored alongside other values from each including the standard errors and confidence intervals for each model.
 
@@ -419,7 +423,7 @@ The simulation was run 5000 times with the dsm model using a tweedie error distr
 
 For the point transect design, the histograms of the abundance estimates from each simulation run are displayed below in figure xxx:
 ```{r fig.show = 'hold', out.width='50%'}
-NSS.point <- read.csv('Estimates/North Se Strat5000point.csv')
+NSS.point <- read.csv('Estimates/North Sea Strat5000point.csv')
 
 hist(NSS.point$dsm.est,
      breaks = 50,
@@ -440,7 +444,7 @@ test <- wilcox.test(NS.point$dsm.est, NS.point$ds.est, paired = T, alternative =
 ```
 This returned a p-values of `r test$p.value` indicating at any significance level, the null hypothesis of the estimates being zero is rejected in favour of the alternate, that the DSM estimates are greater than those of DS. If we now compare the other variables extracted from the models in the below, we can examine the accuracy and variability of each method:
 ``` {r }
-results.point <- read.csv('Results/results NS 5000 point.csv')
+results.point <- read.csv('Results/results NS Strat 5000 point.csv')
 
 results.point$X <- NULL
 
@@ -485,7 +489,7 @@ test <- wilcox.test(NSS.line$dsm.est, NSS.line$ds.est, paired = T, alternative =
 ```
 This returned a p-values of `r test$p.value` indicating at any significance level, the null hypothesis of the estimates being zero is rejected in favour of the alternate, that the DSM estimates are greater than those of DS. Examining the other statistics extracted from the simulation.
 ``` {r }
-results.line <- read.csv('Results/results NS 5000 line.csv')
+results.line <- read.csv('Results/results NS Strat 5000 line.csv')
 
 results.line$X <- NULL
 
@@ -553,10 +557,3 @@ From the results table above, it can be seen that in this case, the performance 
 
 
 # References {-}
-
-```{r generateBibliography, results="asis", echo=FALSE}
-require("knitcitations")
-cleanbib()
-options("citation_format" = "pandoc")
-read.bibtex(file = "Reports/references.bib")
-```
