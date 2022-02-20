@@ -15,13 +15,15 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea region Line.R')
 
-#source('Regions/North Sea Strata Line.R') 
+source('Regions/North Sea Strata Line.R') 
 
 #source('Regions/North Sea Strata Line zigzag.R') 
 
 #source('Regions/North Sea extreme Line.R') 
 
-source('Regions/North Sea Break Line.R') 
+#source('Regions/North Sea Break Line.R')
+
+#source('Regions/Montrave region point.R') 
 
 source('Simulations/prediction grid.R')
 
@@ -29,7 +31,7 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 2000,
+sim <- make.simulation(reps = 5000,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -133,7 +135,7 @@ for (j in 1:sim@reps) {
   estimates$ds.ci.up[j] <- last(ds.mod$dht$individuals$N$ucl)
   
   # density model
-  dsm.mod <- dsm(count~s(X, Y,k = sum(survey@transect@samp.count)),
+  dsm.mod <- dsm(count~s(X, Y, k = sum(survey@transect@samp.count)),
                  ddf.obj = ds.mod,
                  segment.data=segdata,
                  segment.area = segdata$Area,
