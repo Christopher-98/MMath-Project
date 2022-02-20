@@ -18,7 +18,6 @@ library(dsims)
 library(knitr)
 library(kableExtra)
 library(dplyr)
-library(moments)
 ```
 
 ## Notes
@@ -407,7 +406,151 @@ From the results table above, it can be seen that in this case, the performance 
 
 ## Stratified Designs
 
-For the stratified designs, it was decided to split the region into two strata, a large northern strata 'North' and a smaller southern strata 'South' to test how the simulation and both methods cope with a stratified design. 
+For the stratified designs, it was decided to split the region into two strata, a large northern strata 'North' and a smaller southern strata 'South' to test how the simulation and both methods cope with a stratified design. The point transect designs aimed for 70 samplers and the line transects for 25 samplers. The standard line designs consisted of a systematic parallel line design with transects perpendicular to the coast and a zigzag line design originating in the North of the region. An example of each design, including the point design, can be seen in figure xxx below:
+```{r fig.show = 'hold', out.width='33%'}
+knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey point.jpg'))
+knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey line.jpg'))
+knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey zigzag.jpg'))
+```
+
+The simulation was run 5000 times with the dsm model using a tweedie error distribution and the only covariates being spatial coordinates.
+
+### Stratifed Results - Point Design
+
+For the point transect design, the histograms of the abundance estimates from each simulation run are displayed below in figure xxx:
+```{r fig.show = 'hold', out.width='50%'}
+NSS.point <- read.csv('Estimates/North Se Strat5000point.csv')
+
+hist(NSS.point$dsm.est,
+     breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(NSS.point$dsm.est), col = 'red')
+
+hist(NSS.point$ds.est,
+     breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(NSS.point$ds.est), col = 'red')
+```
+
+These plots suggest both methods are relatively good at estimating the true abundance of 1000, with both methods appearing to overestimate, with the DSM method overestimating slightly more than the DS method. There also appears to be a slight right skewness to both plots which will be looked at analytically. Investigating the means further, we find the mean of DSM estimates to be `r round(mean(NSS.point$dsm.est),2) ` and the mean of DS estimates to be `r round(mean(NSS.point$ds.est),2)`. These estimates are both close to the true abundance, with the overestimation present as mentioned above. Overall, it was found that the estimates produced by DSM were greater than those produced by DS from the same survey data `r sum((NSS.point$dsm.est - NSS.point$ds.est) > 0) / nrow(NSS.point) *100` % of the time, indicating it is highly likely DSM will produce an estimate greater than that of DS. A Wilcoxon test was performed on both sets of estimates with the alternative being that DSM was greater than DS.
+``` {r}
+test <- wilcox.test(NS.point$dsm.est, NS.point$ds.est, paired = T, alternative = 'greater')
+```
+This returned a p-values of `r test$p.value` indicating at any significance level, the null hypothesis of the estimates being zero is rejected in favour of the alternate, that the DSM estimates are greater than those of DS. If we now compare the other variables extracted from the models in the below, we can examine the accuracy and variability of each method:
+``` {r }
+results.point <- read.csv('Results/results NS 5000 point.csv')
+
+results.point$X <- NULL
+
+results.point <-  results.point %>%
+        `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage',
+                 'Estimate Skewness',
+                 'Estimate Kurtosis')) %>%
+        `colnames<-`(c('DSM results', 'DS results'))
+kable(results.point) %>%
+        add_header_above(c('Statistic' = 1, 'Point Design' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "hold_position")
+```
+From the results table above, it can be observed that in this case, the DS method overall performed better than the DSM method, having a smaller bias as well as higher confidence interval converge, despite having a smaller Mean Std error. Additionally, the standard deviation of the estimates is slightly less for the DS method, however both methods do a relatively good job at estimating this. Additionally, we observe from the skewness statistics that both methods returned a positive statistic indicating the right-skewed as identified above, which suggests the right tail is longer and this is supported by some of the estimates being over 2000, with the maximums for DSM and DS being `r round(max(NSS.point$dsm.est),2) ` and `r round(max(NSS.point$ds.est),2)` respectively. The kurtosis figures for both methods are greater than 3, indicating we would expect more frequent outliers than a normal distribution   While the Mean CV for the DSM method is lower, the difference is marginal and does not out-way the bias or variance issues of this method. Overall this clearly seems to be a case where the DS method performs better than the DSm estimation method.
+
+### Stratifed Results - Parallel Line Design
+
+Now examining the results of the line transect design, on the same density surface, we see the histograms of the two estimates below:
+
+```{r fig.show = 'hold', out.width='50%'}
+NSS.line <-  read.csv('Estimates/North Sea Strat5000line.csv')
+
+hist(NSS.line$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(NSS.line$dsm.est), col = 'red')
+
+hist(NSS.line$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(NSS.line$ds.est), col = 'red')
+```
+
+These plots are very similar to their point transect counterparts, with the mean for each signified by the red line appearing very close to truth.However, there appears to be less skewness for these than is present with the point transect results. Investigating this further, we find the mean of DSM estimates to be `r round(mean(NSS.line$dsm.est), 2) ` and the mean of DS estimates to be `r round(mean(NSS.line$ds.est), 2)`. These estimates are very close to the true Overall, it was found that the estimates produced by DSM were greater than those produced by DS from the same survey data `r sum((NSS.line$dsm.est - NSS.line$ds.est) > 0) / nrow(NSS.line) *100` % of the time, indicating it is highly likely DSM will produce an estimate greater than that of DS. A Wilcoxon test was performed on both sets of estimates with the alternative being that DSM was greater than DS.
+``` {r}
+test <- wilcox.test(NSS.line$dsm.est, NSS.line$ds.est, paired = T, alternative = 'greater')
+```
+This returned a p-values of `r test$p.value` indicating at any significance level, the null hypothesis of the estimates being zero is rejected in favour of the alternate, that the DSM estimates are greater than those of DS. Examining the other statistics extracted from the simulation.
+``` {r }
+results.line <- read.csv('Results/results NS 5000 line.csv')
+
+results.line$X <- NULL
+
+results.line <-  results.line %>%
+        `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage',
+                 'Estimate Skewness',
+                 'Estimate Kurtosis')) %>%
+        `colnames<-`(c('DSM results', 'DS results'))
+kable(results.line) %>%
+        add_header_above(c('Statistic' = 1, 'Parallel Line Design' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "hold_position")
+```
+From the results table above, it can be seen that in this case, the performance of both models was similar and each performed well in different areas compared to the each other. The mean estimate was again a slight overestimation and as a result, bias was slightly higher for DSM, however this difference was comparatively small. The Mean Std errors were lower for DSM and far closer to the Std Dev of the estimates, highlighting the better error estimation of DSM. However the Std Dev of the estimates was slightly smaller for the DS approach. The DS method also has a higher probability of truth being contained within its confidence intervals, at `r results.line[6,2]` compared to `r results.line[6,1]`, however this difference is likely due to the higher Std errors from the DS method wideing the confidence interval. Despite this, both methods achieved truth in their confidence intervals over the 95% significance level. The skewness scores for both are very similar and suggest again a slight right skew however this is very small. The kurtosis scores are very close to 3, suggesting the kurtosis is very similar to that of a normal distribution. In the Jarque-Bera test for normality, DSM and DS estimates return p-values of `r jarque.test(NSS.line$dsm.est)$p.value` and `r jarque.test(NSS.line$ds.est)$p.value` respectively. These indicate we can not reject the null hypothesis that these estimates are normally distributed. Overall, while the mean estimate appears in favour of the DS method, the DSM approach can be said to have performed better in this simulation, due to the small bias, lower Mean Std error and coefficients of variation. 
+
+### Stratifed Results - Zigzag Line Design
+
+Now examining the results of the zigzag line design, on the same density surface, we see the histograms of the two estimates below:
+
+```{r fig.show = 'hold', out.width='50%'}
+NSS.zig <-  read.csv('Estimates/North Sea5000linezigzag.csv')
+
+hist(NSS.zig$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(NSS.zig$dsm.est), col = 'red')
+
+hist(NSS.zig$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(NSS.zig$ds.est), col = 'red')
+```
+
+These plots are very similar to their point transect counterparts, with the mean for each signified by the red line appearing very close to truth.However, there appears to be less skewness for these than is present with the point transect results. Investigating this further, we find the mean of DSM estimates to be `r round(mean(NSS.zig$dsm.est), 2) ` and the mean of DS estimates to be `r round(mean(NSS.zig$ds.est), 2)`. These estimates are very close to the true Overall, it was found that the estimates produced by DSM were greater than those produced by DS from the same survey data `r sum((NSS.zig$dsm.est - NSS.zig$ds.est) > 0) / nrow(NSS.zig) *100` % of the time, indicating it is highly likely DSM will produce an estimate greater than that of DS. A Wilcoxon test was performed on both sets of estimates with the alternative being that DSM was greater than DS.
+``` {r}
+test <- wilcox.test(NS.zig$dsm.est, NS.zig$ds.est, paired = T, alternative = 'greater')
+```
+This returned a p-values of `r test$p.value` indicating at any significance level, the null hypothesis of the estimates being zero is rejected in favour of the alternate, that the DSM estimates are greater than those of DS. Examining the other statistics extracted from the simulation.
+``` {r }
+results.zigzag <- read.csv('Results/results NS 5000 zigzag.csv')
+
+results.zigzag$X <- NULL
+
+results.zigzag <-  results.zigzag %>%
+        `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage',
+                 'Estimate Skewness',
+                 'Estimate Kurtosis')) %>%
+        `colnames<-`(c('DSM results', 'DS results'))
+kable(results.zigzag) %>%
+        add_header_above(c('Statistic' = 1, 'Parallel Line Design' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "hold_position")
+```
+From the results table above, it can be seen that in this case, the performance of both models was similar and each performed well in different areas compared to the each other. The mean estimate was again a slight overestimation and as a result, bias was slightly higher for DSM, however this difference was comparatively small. The Mean Std errors were lower for DSM and far closer to the Std Dev of the estimates, highlighting the better error estimation of DSM. However the Std Dev of the estimates was slightly smaller for the DS approach. The DS method also has a higher probability of truth being contained within its confidence intervals, at `r results.zigzag[6,2]` compared to `r results.zigzag[6,1]`, however this difference is likely due to the higher Std errors from the DS method wideing the confidence interval. Despite this, both methods achieved truth in their confidence intervals over the 95% significance level. The skewness scores for both are very similar and suggest again a slight right skew however this is very small. The kurtosis scores are very close to 3, suggesting the kurtosis is very similar to that of a normal distribution. In the Jarque-Bera test for normality, DSM and DS estimates return p-values of `r jarque.test(NSS.zig$dsm.est)$p.value` and `r jarque.test(NSS.zig$ds.est)$p.value` respectively. These indicate we can not reject the null hypothesis that these estimates are normally distributed. Overall, while the mean estimate appears in favour of the DS method, the DSM approach can be said to have performed better in this simulation, due to the small bias, lower Mean Std error and coefficients of variation. 
+
 
 # References {-}
 
