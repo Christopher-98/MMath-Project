@@ -5,6 +5,10 @@ library(sf)
 library(Distance)
 library(dsm)
 library(dsims)
+library(tidyverse)
+library(sp)
+
+
 
 #provided from
 #https://dieghernan.github.io/201905_Cast-to-subsegments/
