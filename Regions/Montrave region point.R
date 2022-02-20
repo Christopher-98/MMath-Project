@@ -1,4 +1,3 @@
-# change region to be north sea shapefile
 library(dsims)
 region <- make.region(region.name = "Montrave",
                       shape = "Regions/Region.shp")
@@ -15,13 +14,12 @@ design <- make.design(region = region,
                       coverage.grid = cover)
 
 samplers <- generate.transects(design, region)
-plot(region, samplers)
+plot(region)
 
 
 
 density <- make.density(region = region,
                         x.space = 1000,
-                        y.space = 1000,
                         constant = 1)
 
 density <- add.hotspot(density, c(0, 2200000), 10000, 3)
@@ -73,7 +71,7 @@ plot(survey)
 
 survey@dist.data[!is.na(survey@dist.data$object),]
 
-jpeg("Reports/Plots/Montrave survey point.jpg")
-plot(survey)
-dev.off()
+# jpeg("Reports/Plots/Montrave survey point.jpg")
+# plot(survey)
+# dev.off()
 
