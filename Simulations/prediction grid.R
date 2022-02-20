@@ -3,9 +3,12 @@ predgrid <- st_make_grid(st_bbox(region@region),
 
 predgrid <- st_intersection(predgrid, region@region)
 
+
 predgrid <- st_as_sf(predgrid)
 
 predgrid$area <- as.numeric(st_area(predgrid))
+
+pred.poly <- as(predgrid, 'Spatial')
 
 predgrid <- st_centroid(predgrid)
 
