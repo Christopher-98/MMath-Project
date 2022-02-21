@@ -29,6 +29,62 @@ jpeg("Reports/Plots/Default_detect.jpg")
 plot(detect, pop.desc)
 dev.off()
 
+jpeg("Reports/Plots/Default survey point.jpg")
+plot(region, samplers)
+dev.off()
+
+source('Regions/default region line.R')
+
+jpeg("Reports/Plots/Default survey line.jpg")
+plot(region, samplers)
+dev.off()
+
+source('Regions/default region line zigzag.R')
+
+jpeg("Reports/Plots/Default survey zigzag.jpg")
+plot(region, samplers)
+dev.off()
+
+
+#North Sea Non-Stratified
+source('Regions/North Sea region.R')
+
+jpeg("Reports/Plots/North Sea survey point.jpg")
+plot(region, samplers)
+dev.off()
+
+source('Regions/North Sea region line.R')
+
+jpeg("Reports/Plots/North Sea survey line.jpg")
+plot(region, samplers)
+dev.off()
+
+source('Regions/North Sea region line zigzag.R')
+
+jpeg("Reports/Plots/North Sea survey zigzag.jpg")
+plot(region, samplers)
+dev.off()
+
+
+#North Sea Stratified
+source('Regions/North Sea Strata.R')
+
+jpeg("Reports/Plots/North Sea Strata survey point.jpg")
+plot(region, samplers)
+dev.off()
+
+source('Regions/North Sea Strata line.R')
+
+jpeg("Reports/Plots/North Sea Strata survey line.jpg")
+plot(region, samplers)
+dev.off()
+
+source('Regions/North Sea Strata line zigzag.R')
+
+jpeg("Reports/Plots/North Sea Strata survey zigzag.jpg")
+plot(region, samplers)
+dev.off()
+
 
 default.point <- read.csv('Estimates/region1000point.csv')
 
