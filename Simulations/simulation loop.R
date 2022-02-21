@@ -19,13 +19,18 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea Strata Line.R') 
 
-#source('Regions/North Sea Strata Line zigzag.R') 
+source('Regions/North Sea Strata Line zigzag.R') 
 
 #source('Regions/North Sea extreme Line.R') 
 
 #source('Regions/North Sea Break Line.R')
 
-source('Regions/Montrave region parallel line.R') 
+#source('Regions/Montrave region parallel line.R') 
+
+#source('Regions/Montrave region random line.R')
+
+#source('Regions/Montrave region zigzag.R')
+
 
 source('Simulations/prediction grid.R')
 
@@ -33,7 +38,7 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 100,
+sim <- make.simulation(reps = 1000,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -59,31 +64,11 @@ for (j in 1:sim@reps) {
   
   survey <- run.survey(sim)
   
-  obsdata <- survey@dist.data[!is.na(survey@dist.data$object),]
+  dsm.data <- generate.dsm.data(region, survey, transect.type)
   
-  estimates$detections[j] <- nrow(obsdata)
+  obsdata <- dsm.data$obsdata
   
-  segs <- to_segments(region,
-                      survey,
-                      transect.type)
-  
-  segdata <- cbind(as.data.frame(st_drop_geometry(segs)),
-                   st_coordinates(segs))
-  
-  # link obsdata to the segments
-  obsdata <- st_as_sf(obsdata, coords = c('x','y'))
-  
-  # remove existing transects as sample labels
-  obsdata$Sample.Label<- NULL
-  
-  #set crs for consistency
-  st_crs(obsdata) <- st_crs(segs)
-  
-  obsdata<- st_join(obsdata, segs, join = st_nearest_feature)
-  obsdata <- st_drop_geometry(obsdata)
-  
-  obsdata <- obsdata[,c("object", "Sample.Label", "distance")]
-  obsdata$size <- 1
+  segdata <- dsm.data$segdata
   
   # distance sampling model
   ds.mod <- suppressMessages(ds(survey@dist.data,
@@ -92,6 +77,8 @@ for (j in 1:sim@reps) {
 	                     formula=~1,
 	                     key=detect@key.function,
 	                     adjustment=NULL))
+  
+  # save results to estimates
   estimates$ds.est[j] <- last(ds.mod$dht$individuals$N$Estimate)
   estimates$ds.se[j] <- last(ds.mod$dht$individuals$N$se)
   estimates$ds.ci.lo[j] <- last(ds.mod$dht$individuals$N$lcl)
@@ -109,16 +96,16 @@ for (j in 1:sim@reps) {
   mods <- mods + 1
   
   # obtain the abundance estimate
-  # needs checked to ensure is close to original population
   dsm.mod.var <- dsm.var.gam(dsm.mod,
                             pred.data = preddata,
                             off.set = preddata$area)
   dsm.sum <- summary(dsm.mod.var)
   
+  #calculate dsm confidence intervals
   ci.term <- exp(qnorm(1-0.05/2) * sqrt(log(1+dsm.sum$cv**2)))
-  dsm.ci <- c(dsm.sum$pred.est / ci.term,
-                 dsm.sum$pred.est * ci.term)
+  dsm.ci <- c(dsm.sum$pred.est / ci.term, dsm.sum$pred.est * ci.term)
   
+  #save estimates 
   estimates$dsm.est[j] <- dsm.sum$pred.est
   estimates$dsm.var[j] <- dsm.mod.var$pred.var
   estimates$dsm.se[j] <- last(dsm.sum$se)
