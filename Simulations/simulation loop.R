@@ -19,13 +19,13 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea Strata Line.R') 
 
-source('Regions/North Sea Strata Line zigzag.R') 
+#source('Regions/North Sea Strata Line zigzag.R') 
 
 #source('Regions/North Sea extreme Line.R') 
 
 #source('Regions/North Sea Break Line.R')
 
-#source('Regions/Montrave region point.R') 
+source('Regions/Montrave region parallel line.R') 
 
 source('Simulations/prediction grid.R')
 
@@ -33,7 +33,7 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 1000,
+sim <- make.simulation(reps = 100,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -63,48 +63,9 @@ for (j in 1:sim@reps) {
   
   estimates$detections[j] <- nrow(obsdata)
   
-  # obtain region boundaries for use in calculating segment areas
-  seg.region <- st_union(region@region)
-  
-  # section for it line transects to split into segments
-  if (transect.type == 'line') {
-    
-    # extract transects
-    samplers <- survey@transect@samplers
-    
-    # split into segments of 2*truncation distance and separate
-    # into individual line strings
-    segs <- stdh_cast_substring(st_segmentize(samplers,
-                                              dfMaxLength = 2*design.trunc),
-                                to = "LINESTRING")
-    
-    segs$Effort <- as.numeric(st_length(segs))
-    segs$Sample.Label <- 1:length(segs$transect)
-    
-    # create polygons based on truncation distance from line
-    # Note: mitre may need set for eszigzagcom studies
-    poly <- st_buffer(segs, dist = design.trunc, endCapStyle = 'FLAT')
-    
-    # Find the areas for each segment, using intersection with region
-    # to account for study area edge profile
-    segs$Area <- as.numeric(st_area(st_intersection(poly, seg.region)))
-    
-    segs <- st_centroid(segs)
-    
-  } else {
-    
-    # For point designs the segments are already defined
-    segs <- survey@transect@samplers
-    
-    segs$Effort <- 1
-    segs$Sample.Label <- segs$transect
-    segs$transect <- NULL
-    
-    poly <- st_buffer(segs,design.trunc)
-    
-    segs$Area <- as.numeric(st_area(st_intersection(poly, seg.region)))
-    
-  }
+  segs <- to_segments(region,
+                      survey,
+                      transect.type)
   
   segdata <- cbind(as.data.frame(st_drop_geometry(segs)),
                    st_coordinates(segs))
