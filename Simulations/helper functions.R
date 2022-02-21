@@ -7,8 +7,7 @@ library(dsm)
 library(dsims)
 library(tidyverse)
 library(sp)
-
-
+library(nngeo)
 
 #provided from
 #https://dieghernan.github.io/201905_Cast-to-subsegments/
@@ -76,4 +75,54 @@ grid_plot_obj <- function(shape, fill, name){
   spdf.df$y <- spdf.df$lat
   
   geom_polygon(aes_string(x="x",y="y",fill=name, group="group"), data=spdf.df)
+}
+
+
+to_segments <-function(region, survey, transect.type) {
+  # obtain region boundaries for use in calculating segment areas
+  seg.region <- st_union(region@region)
+  
+  # section for it line transects to split into segments
+  if (transect.type == 'line') {
+    
+    # extract transects
+    samplers <- survey@transect@samplers
+    
+    # if transects are multilinestrings, split into individual linestrings
+    samplers <- st_segments(samplers, progress = F)
+    
+    # split into segments of 2*truncation distance and separate
+    # into individual line strings
+    segs <- stdh_cast_substring(st_segmentize(samplers,
+                                              dfMaxLength = 2*design.trunc),
+                                to = "LINESTRING")
+    
+    segs$Effort <- as.numeric(st_length(segs))
+    segs$Sample.Label <- 1:length(segs$transect)
+    
+    # create polygons based on truncation distance from line
+    # Note: mitre may need set for eszigzagcom studies
+    poly <- st_buffer(segs, dist = design.trunc, endCapStyle = 'FLAT')
+    
+    # Find the areas for each segment, using intersection with region
+    # to account for study area edge profile
+    segs$Area <- as.numeric(st_area(st_intersection(poly, seg.region)))
+    
+    segs <- st_centroid(segs)
+    
+  } else {
+    
+    # For point designs the segments are already defined
+    segs <- survey@transect@samplers
+    
+    segs$Effort <- 1
+    segs$Sample.Label <- segs$transect
+    segs$transect <- NULL
+    
+    poly <- st_buffer(segs,design.trunc)
+    
+    segs$Area <- as.numeric(st_area(st_intersection(poly, seg.region)))
+    
+  }
+  return(segs)
 }
