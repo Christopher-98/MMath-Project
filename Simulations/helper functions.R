@@ -126,3 +126,36 @@ to_segments <-function(region, survey, transect.type) {
   }
   return(segs)
 }
+
+generate.dsm.data <- function(region, survey, transect.type){
+  
+  # extract observation data
+  obsdata <- survey@dist.data[!is.na(survey@dist.data$object),]
+  
+  estimates$detections[j] <- nrow(obsdata)
+  
+  # generate segments for dsm
+  segs <- to_segments(region, survey, transect.type)
+  
+  segdata <- cbind(as.data.frame(st_drop_geometry(segs)), st_coordinates(segs))
+  
+  # link obsdata to the segments
+  obsdata <- st_as_sf(obsdata, coords = c('x','y'))
+  
+  # remove existing transects as sample labels
+  obsdata$Sample.Label<- NULL
+  
+  #set crs for consistency
+  st_crs(obsdata) <- st_crs(segs)
+  
+  # link observations to segments by nearest segment
+  obsdata<- st_join(obsdata, segs, join = st_nearest_feature)
+  obsdata <- st_drop_geometry(obsdata)
+  
+  # save only required columns
+  obsdata <- obsdata[,c("object", "Sample.Label", "distance")]
+  obsdata$size <- 1
+  
+  return(list(segdata = segdata,
+              obsdata = obsdata))
+}
