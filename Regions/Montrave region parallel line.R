@@ -10,7 +10,8 @@ design.trunc <- 1000
 design <- make.design(region = region,
                       transect.type = 'line',
                       design.angle = 45,
-                      samplers = 15,
+                      spacing = 12000,
+                      #samplers = 15,
                       truncation = design.trunc,
                       coverage.grid = cover)
 
@@ -46,7 +47,7 @@ plot(density, region)
 
 pop.desc <- make.population.description(region = region,
                                         density = density,
-                                        N=1000)
+                                        N=1500)
 
 detect <- make.detectability(key.function = "hn",
                              scale.param = 500,
@@ -72,7 +73,7 @@ plot(survey)
 
 survey@dist.data[!is.na(survey@dist.data$object),]
 
-# jpeg("Reports/Plots/Montrave survey point.jpg")
-# plot(survey)
+# jpeg("Reports/Plots/Montrave survey parallel line.jpg")
+# plot(region, samplers)
 # dev.off()
 
