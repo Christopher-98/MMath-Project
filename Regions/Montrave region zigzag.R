@@ -48,7 +48,7 @@ plot(density, region)
 
 pop.desc <- make.population.description(region = region,
                                         density = density,
-                                        N=1000)
+                                        N=1500)
 
 detect <- make.detectability(key.function = "hn",
                              scale.param = 500,
