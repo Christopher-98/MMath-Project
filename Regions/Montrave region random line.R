@@ -5,7 +5,7 @@ region <- make.region(region.name = "Montrave",
 cover <- make.coverage(region = region,
                        n.grid.points = 1000)
 
-design.trunc <- 2000
+design.trunc <- 1000
 
 design <- make.design(region = region,
                       transect.type = 'line',
@@ -47,7 +47,7 @@ plot(density, region)
 
 pop.desc <- make.population.description(region = region,
                                         density = density,
-                                        N=1000)
+                                        N=1500)
 
 detect <- make.detectability(key.function = "hn",
                              scale.param = 500,
