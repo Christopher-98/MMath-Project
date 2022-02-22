@@ -22,7 +22,7 @@ dev.off()
 source('Regions/default region.R')
 
 jpeg("Reports/Plots/Default_density.jpg")
-plot(density)#, main = 'Basic density surface for Default region.')
+plot(density)
 dev.off()
 
 jpeg("Reports/Plots/Default_detect.jpg")
@@ -86,12 +86,30 @@ plot(region, samplers)
 dev.off()
 
 
-default.point <- read.csv('Estimates/region1000point.csv')
 
-hist(default.point$dsm.est,breaks = 50, main = 'Histogram of DSM estimates')
-hist(default.point$ds.est,breaks = 50, main = 'Histogram of DS estimates')
+#Montrave region
+source('Regions/Montrave region parallel line.R')
 
-default.line <-  read.csv('Estimates/region1000line.csv')
+jpeg("Reports/Plots/Montrave survey parallel line.jpg")
+plot(region, samplers)
+dev.off()
 
-hist(default.line$dsm.est,breaks = 50, main = 'Histogram of DSM estimates')
-hist(default.line$ds.est,breaks = 50, main = 'Histogram of DS estimates')
+jpeg("Reports/Plots/Montrave density.jpg")
+plot(density)
+dev.off()
+
+jpeg("Reports/Plots/Montrave detect.jpg")
+plot(detect, pop.desc)
+dev.off()
+
+source('Regions/Montrave region random line.R')
+
+jpeg("Reports/Plots/Montrave survey random line.jpg")
+plot(region, samplers)
+dev.off()
+
+source('Regions/Montrave region zigzag.R')
+
+jpeg("Reports/Plots/Montrave survey zigzag.jpg")
+plot(region, samplers)
+dev.off()
