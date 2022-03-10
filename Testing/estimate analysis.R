@@ -3,7 +3,9 @@ library(moments)
 
 # load appropriate estimates file
 
-estimates <- read.csv('Estimates/North Sea Strat5000point.csv')
+estimates <- read.csv('Estimates/North Sea Extreme500lineS2.csv')
+
+N = 1000
 
 # calculate mean of each method
 dsm.mean <- mean(estimates$dsm.est)
@@ -14,8 +16,8 @@ ds.sd <- sd(estimates$ds.est)
 
 
 # calculate percentage bias
-dsm.bias <- (dsm.mean - 1000) / 1000 *100
-ds.bias <- (ds.mean - 1000) / 1000 *100
+dsm.bias <- (dsm.mean - N) / N *100
+ds.bias <- (ds.mean - N) / N *100
 
 # need standard errors of dsm estimates?
 dsm.mean.se <- mean(estimates$dsm.se)
@@ -31,8 +33,8 @@ summary(dsm.cvs)
 dsm.cv.mean <- mean(dsm.cvs)
 
 # Truth in confidence interval
-dsm.ci.coverage <- mean(estimates$dsm.ci.lo<1000 & estimates$dsm.ci.up > 1000)
-ds.ci.coverage <- mean(estimates$ds.ci.lo<1000 & estimates$ds.ci.up > 1000)
+dsm.ci.coverage <- mean(estimates$dsm.ci.lo<N & estimates$dsm.ci.up > N)
+ds.ci.coverage <- mean(estimates$ds.ci.lo<N & estimates$ds.ci.up > N)
 
 # Skewness and Kurtosis of estimates
 dsm.skew <- skewness(estimates$dsm.est)
@@ -63,7 +65,8 @@ ds.results <- c(ds.mean,
 
 
 results <- cbind(dsm.results, ds.results)
-write.csv(results, file = 'Results/results NS Strat 5000 point.csv')
+results
+write.csv(results, file = 'Results/results NS Extreme S2.csv')
 
 
 
