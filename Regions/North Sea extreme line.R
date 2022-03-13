@@ -47,7 +47,7 @@ plot(detect, pop.desc)
 
 analyses <- make.ds.analysis(dfmodel = list(~1),
                              key = "hn",
-                             er.var = "S1",
+                             er.var = "S2",
                              truncation = design.trunc)
 
 sim <- make.simulation(reps = 1,
