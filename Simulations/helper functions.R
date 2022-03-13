@@ -100,6 +100,9 @@ to_segments <-function(region, survey, transect.type) {
     segs$Effort <- as.numeric(st_length(segs))
     segs$Sample.Label <- 1:length(segs$transect)
     
+    # Remove segment if length is zero as no observations can occur?
+    segs <- segs[segs$Effort != 0,]
+    
     # create polygons based on truncation distance from line
     # Note: mitre may need set for eszigzagcom studies
     poly <- st_buffer(segs, dist = design.trunc, endCapStyle = 'FLAT')
