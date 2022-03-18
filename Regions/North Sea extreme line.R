@@ -12,7 +12,7 @@ design.trunc = 10
 design <- make.design(region = region,
                              transect.type = 'line',
                              design.angle = 90,
-                             samplers = 25,
+                             samplers = 20,
                              truncation = design.trunc,
                              coverage.grid = cover)
 
@@ -23,14 +23,15 @@ plot(region, samplers)
 
 
 density <- make.density(region = region,
-                        x.space = 25,
+                        x.space = 10,
                         constant = 1)
 
 density <- add.hotspot(density, c(250, 400), 100, 1.5)
 density <- add.hotspot(density, c(300, 300), 100, 2.5)
-density <- add.hotspot(density, c(100, 700), 300, -0.5)
+density <- add.hotspot(density, c(100, 700), 300, 0.5)
 density <- add.hotspot(density, c(-50, 700), 100, 1.5)
 density <- add.hotspot(density, c(200, 800), 200, 4)
+density <- add.hotspot(density, c(0, 400), 100, 4)
 
 
 plot(density, region)
@@ -47,7 +48,7 @@ plot(detect, pop.desc)
 
 analyses <- make.ds.analysis(dfmodel = list(~1),
                              key = "hn",
-                             er.var = "S2",
+                             er.var = "R2",
                              truncation = design.trunc)
 
 sim <- make.simulation(reps = 1,
