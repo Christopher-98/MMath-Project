@@ -2,7 +2,7 @@
 library(dsims)
 
 # region to be north sea shape file
-region <- make.region(region.name = "North Sea Extreme",
+region <- make.region(region.name = "North Sea High Edge Density",
                       shape = "Regions/RegionPrj.shp")
 
 cover <- make.coverage(region = region,
