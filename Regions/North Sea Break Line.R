@@ -2,7 +2,7 @@
 library(dsims)
 
 # region to be north sea shape file
-region <- make.region(region.name = "North Sea Break",
+region <- make.region(region.name = "North Sea Low Edge Density",
                       shape = "Regions/RegionPrj.shp")
 
 cover <- make.coverage(region = region,
@@ -27,14 +27,11 @@ density <- make.density(region = region,
                         constant = 0.25)
 
 density <- add.hotspot(density, c(150, 450), 50, 2)
-#density <- add.hotspot(density, c(250, 350), 50, -1)
-#density <- add.hotspot(density, c(100, 700), 30, -1)
 density <- add.hotspot(density, c(-50, 700), 30, 2)
 density <- add.hotspot(density, c(100, 850), 20, 2.5)
-#density <- add.hotspot(density, c(0, 450), 70, -0.5)
 density <- add.hotspot(density, c(0, 825), 50, 2.5)
 density <- add.hotspot(density, c(70, 620), 30, 2.5)
-#density <- add.hotspot(density, c(-100, 700), 75, -1)
+
 
 plot(density, region)
 
