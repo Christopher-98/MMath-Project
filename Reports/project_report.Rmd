@@ -86,6 +86,8 @@ Where the model follows the same three distributions as before. The main differe
 
 To allow for a DSM to predict abundance, a series of prediction cells must be defined. These are not necessarily restricted to just the original study region, allowing for regions outside the study area to be predicted over. Each of the prediction cells must include the same covariates as specified in the dsm, including the area of each cell. Predictions can then be made for the abundance in each cell and by summing these over the whole region, an overall abundance estimate can be obtained. The size of the prediction cells may be specified by the user, however cells 'smaller than the resolution of the spatially referenced data' do not have an influence on the abundance estimates produced by dsm.
 
+\pagebreak
+
 # Simulation extentions
 
 Within the _dsims_ package @R-dsims, the current simulation is set-up as explained within the the Distance Sampling Simulations section above. To allow for the inclusion of Density surface modelling within the simulation, a number of changes and additions were required to be made to ensure the compatibility of the two approachs within the simulation. This was a major focus of this project and was where a large portion of time was spent testing to ensure the generality of the code for future use. The initial setup required is the same as with the existing simulation. Namely, the study region, density surface, population and detection function are required. In addition to this, the design in question should also be specified, with any of the choices provided by _dsims_ available. 
@@ -99,6 +101,8 @@ For Point transect designs, each point is treated as its own segment however, in
 Once the segment areas have been calculated, the segments can be linked to the observation data by allocating each observation to the nearest segment and giving this the respective segments sample label in the observation data, overwriting the original allocation. Additionally, the coordinate reference system of the observation data is set as that of the segments to ensure consistency when using different reference systems to the default. 
 
 Based on this data, both a distance sampling model and density surface model are constructed, with the dsm modeling the counts against the smooth of spatial locations using a tweedie error distribution. The formulas for both could be changed to include environmental or other covariates such as strata, allowing for different detection functions to be fit to each strata. In the smoothed term, the degrees of freedom is restricted to the total number of transects. The limit for this is the number of segments in the model, which in the case of point transects is the total number of transects. While this could be far larger for line transects, this would increase the computational requirements beyond a reasonable level and not offer a significant improvement for this increase. The abundance estimates are extracted from both models and stored alongside other values from each including the standard errors and confidence intervals for each model.
+
+\pagebreak
 
 # Modelling - Default Region
 
@@ -243,6 +247,7 @@ kable(results.zig,
 
 From Table \@ref(tab:resdefzig), despite the known issue, the DSM model performs relatively well, having a reasonably small bias. The mean standard error is in fact lower than that of the DS model, indicating higher precision on average across the models, with the standard deviation of the estimates being lower in both cases, suggesting greater precision for both modes than the standard errors imply. The mean coefficient of variation is slightly lower for the DSM model however the confidence interval coverage is higher with the DS model, indicating truth has a higher probability of being captured within the models confidence interval. 
 
+\pagebreak
 
 # Modeling - North Sea
 
@@ -561,6 +566,7 @@ kable(results.zigzag,
 ```
 From the results table above, it can be seen that in this case, the performance of both models was similar and each performed well in different areas compared to the each other. The mean estimate was again a slight overestimation and as a result, bias was slightly higher for DSM, however this difference was comparatively small. The Mean Std errors were lower for DSM and far closer to the Std Dev of the estimates, highlighting the better error estimation of DSM. However the Std Dev of the estimates was slightly smaller for the DS approach. The DS method also has a higher probability of truth being contained within its confidence intervals, at `r results.zigzag[6,2]` compared to `r results.zigzag[6,1]`, however this difference is likely due to the higher Std errors from the DS method wideing the confidence interval. Despite this, both methods achieved truth in their confidence intervals over the 95% significance level. The skewness scores for both are very similar and suggest again a slight right skew however this is very small. The kurtosis scores are very close to 3, suggesting the kurtosis is very similar to that of a normal distribution. In the Jarque-Bera test for normality, DSM and DS estimates return p-values of `r jarque.test(NSS.zig$dsm.est)$p.value` and `r jarque.test(NSS.zig$ds.est)$p.value` respectively. These indicate we can not reject the null hypothesis that these estimates are normally distributed. Overall, while the mean estimate appears in favour of the DS method, the DSM approach can be said to have performed better in this simulation, due to the small bias, lower Mean Std error and coefficients of variation. 
 
+\pagebreak
 
 # Modeling - Buckland 2015 Example
 
@@ -571,7 +577,7 @@ plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave detect.jpg'))
 ```
 
 
-The three different designs will be used, being the same as those tested in the case study in @Buckland2015. These will be a systematic parallel line design, a random parallel line design and a zigzag design. Examples of each design are displayed in Figure \@ref(fig:Montsurvey) below:
+By using this study region, it is possible to verify the simulation method developed for DSM can be run on study regions with internal holes, such as islands on a seaborne survey. The three different designs will be used, being the same as those tested in the case study in @Buckland2015. These will be a systematic parallel line design, a random parallel line design and a zigzag design. Examples of each design are displayed in Figure \@ref(fig:Montsurvey) below:
 
 ```{r Montsurvey, fig.show = 'hold', out.height='33%', fig.cap='Example surveys for each Design'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey random line.jpg')))
@@ -582,21 +588,84 @@ As with each of the simulations run as part of the North Sea section, 5000 simul
 
 ## Results - Random Parallel Line
 
+We can now examine the results of the Random parallel line design by initially plotting histograms of the estimates from both the DS and DSM methods below in Figure \@ref(fig:histMontrand):
+
+```{r histMontrand, fig.show = 'hold', out.width='50%', fig.cap='Histograms of Random Parallel Design estimates for Buckland 2015 example region'}
+Mont.rand <-  read.csv('Estimates/Montrave5000linerandom.csv')
+
+hist(Mont.rand$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(Mont.rand$dsm.est), col = 'red')
+
+hist(Mont.rand$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(Mont.rand$ds.est), col = 'red')
+```
+
+While the plot for the DS estimates appears similar to those we have seen before, the estimates for the DSM method appear markedly different. This is due to the prescence of very extreme overestimates with the largest estimate being `r round(max(Mont.rand$dsm.est))`, over 3 times the true population. It initially appears that the majority of the DSM estimates are centred around the true population of 1500, however this will be investigated further below. As with the previous simulations, it was found that the estimates produced by DSM were greater than those produced by DS from the same survey data `r sum((Mont.rand$dsm.est - Mont.rand$ds.est) > 0) / nrow(Mont.rand) *100` % of the time, indicating it is likely DSM will produce an estimate greater than that of DS. A Wilcoxon test was performed on both sets of estimates with the alternative being that DSM was greater than DS.
+``` {r}
+test <- wilcox.test(Mont.rand$dsm.est, Mont.rand$ds.est, paired = T, alternative = 'greater')
+```
+This returned a p-values of `r test$p.value` indicating at any significance level, the null hypothesis of the estimates being zero is rejected in favour of the alternate, that the DSM estimates are greater than those of DS.
+
+``` {r resMontrand}
+results.rand <- read.csv('Results/results Montrave random.csv')
+
+results.rand$X <- NULL
+
+results.rand <-  results.rand %>%
+        `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage',
+                 'Estimate Skewness',
+                 'Estimate Kurtosis')) %>%
+        `colnames<-`(c('DSM results', 'DS results'))
+kable(results.rand,
+      caption = 'Buckland 2015 example results - Random Line') %>%
+        add_header_above(c('Statistic' = 1, 'Random Parallel Line Design' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "HOLD_position")
+```
+In Table \@ref(tab:resMontrand) above, we can see the various statistics extracted during the course of the simulations. 
 
 
 ## Results - Systematic Parallel Line
 
+``` {r}
+results.para <- read.csv('Results/results Montrave parallel.csv')
+
+results.para$X <- NULL
+
+results.para <-  results.para %>%
+        `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage',
+                 'Estimate Skewness',
+                 'Estimate Kurtosis')) %>%
+        `colnames<-`(c('DSM results', 'DS results'))
+kable(results.para,
+      caption = 'Buckland 2015 example results - Parallel Line') %>%
+        add_header_above(c('Statistic' = 1, 'Systematic Parallel Line Design' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "hold_position")
+```
+
 ## Results - Zigzag Line
 
-
-# Modeling- Variance estimation tests
-
 ``` {r}
-results.extreme <- read.csv('Results/results NS extreme.csv')
+results.zig <- read.csv('Results/results Montrave zigzag.csv')
 
-results.extreme$X <- NULL
+results.zig$X <- NULL
 
-results.extreme <-  results.extreme %>%
+results.zig <-  results.zig %>%
         `rownames<-`(c('Mean',
                  'Bias',
                  'Mean Std error of estimates',
@@ -606,101 +675,25 @@ results.extreme <-  results.extreme %>%
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
         `colnames<-`(c('DSM results', 'DS results'))
-kable(results.extreme,
-      caption = 'North Sea Extreme density results - Line') %>%
-        add_header_above(c('Statistic' = 1, 'Parallel Line Design' = 2)) %>%
-        kable_styling(position = 'center',
-                      latex_options = "hold_position")
-```
-``` {r}
-results.break <- read.csv('Results/results NS break.csv')
-
-results.break$X <- NULL
-
-results.break <-  results.break %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
-                 'Confidence Interval Coverage',
-                 'Estimate Skewness',
-                 'Estimate Kurtosis')) %>%
-        `colnames<-`(c('DSM results', 'DS results'))
-kable(results.break,
-      caption = 'North Sea Extreme density results - Line') %>%
-        add_header_above(c('Statistic' = 1, 'Parallel Line Design' = 2)) %>%
+kable(results.zig,
+      caption = 'Buckland 2015 example results - Zigzag Line') %>%
+        add_header_above(c('Statistic' = 1, 'Zigzag Line Design' = 2)) %>%
         kable_styling(position = 'center',
                       latex_options = "hold_position")
 ```
 
+\pagebreak
 
-# Modeling - North Sea extreme different variance estimators:
+# Modeling - Variance estimation tests
 
-``` {r}
-results.break <- read.csv('Results/results NS Extreme O2.csv')
+\pagebreak
 
-results.break$X <- NULL
+# Modeling - North Sea Predictions outside study area:
 
-results.break <-  results.break %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
-                 'Confidence Interval Coverage',
-                 'Estimate Skewness',
-                 'Estimate Kurtosis')) %>%
-        `colnames<-`(c('DSM results', 'DS results'))
-kable(results.break,
-      caption = 'North Sea Extreme density results - O2 estimator') %>%
-        add_header_above(c('Statistic' = 1, 'Parallel Line Design' = 2)) %>%
-        kable_styling(position = 'center',
-                      latex_options = "hold_position")
-```
-``` {r}
-results.break <- read.csv('Results/results NS Extreme R2.csv')
+As mentioned within the simulation etentions section, the prediction grid for DSM is not limited to the area of the study region, it can be smaller or larger and does not even need to include any part of the study region. However, predicting populations outside of the original study region may be subject to large variations dependant on the gradient of the density surface at the edge of the region. This will be tested by using the same North Sea region we have explored before, however with two very contrasting density surfaces to show the two extremes of what could happen in this scenario. As this simulation will focus on predicting the abundance outside of the study region, the estimates from the DS method will not be compared here as the predictions will be made over a far larger area. As a simple example, the prediction grid used will be based on the bounding box of the North Sea region, in essence a large rectangle encompassing the entirety of the region. 
 
-results.break$X <- NULL
+\pagebreak
+# Discussion
 
-results.break <-  results.break %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
-                 'Confidence Interval Coverage',
-                 'Estimate Skewness',
-                 'Estimate Kurtosis')) %>%
-        `colnames<-`(c('DSM results', 'DS results'))
-kable(results.break,
-      caption = 'North Sea Extreme density results - R2 estimator') %>%
-        add_header_above(c('Statistic' = 1, 'Parallel Line Design' = 2)) %>%
-        kable_styling(position = 'center',
-                      latex_options = "hold_position")
-```
-``` {r}
-results.break <- read.csv('Results/results NS Extreme S2.csv')
-
-results.break$X <- NULL
-
-results.break <-  results.break %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
-                 'Confidence Interval Coverage',
-                 'Estimate Skewness',
-                 'Estimate Kurtosis')) %>%
-        `colnames<-`(c('DSM results', 'DS results'))
-kable(results.break,
-      caption = 'North Sea Extreme density results - S2 estimator') %>%
-        add_header_above(c('Statistic' = 1, 'Parallel Line Design' = 2)) %>%
-        kable_styling(position = 'center',
-                      latex_options = "hold_position")
-```
-
-
-
+\pagebreak
 # References {-}
