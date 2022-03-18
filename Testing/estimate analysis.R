@@ -3,9 +3,9 @@ library(moments)
 
 # load appropriate estimates file
 
-estimates <- read.csv('Estimates/North Sea Extreme500lineS2.csv')
+estimates <- read.csv('Estimates/Montrave5000linezigzag.csv')
 
-N = 1000
+N = 1500
 
 # calculate mean of each method
 dsm.mean <- mean(estimates$dsm.est)
@@ -66,7 +66,7 @@ ds.results <- c(ds.mean,
 
 results <- cbind(dsm.results, ds.results)
 results
-write.csv(results, file = 'Results/results NS Extreme S2.csv')
+write.csv(results, file = 'Results/results Montrave zigzag.csv')
 
 
 
