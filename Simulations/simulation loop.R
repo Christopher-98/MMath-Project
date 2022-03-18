@@ -23,7 +23,7 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea extreme Line.R') 
 
-#source('Regions/North Sea Break Line.R')
+source('Regions/North Sea Break Line.R')
 
 #source('Regions/Montrave region parallel line.R') 
 
@@ -31,7 +31,14 @@ source('Simulations/helper functions.R')
 
 #source('Regions/Montrave region zigzag.R')
 
-source('Simulations/prediction grid.R')
+
+# select prediction grid to use:
+#   standard is cropped to study region
+#   outside region covers the entire bounding box of the study region
+
+#source('Simulations/prediction grid.R')
+
+source('Simulations/outside region prediction grid.R')
 
 # set transect type based on survey design
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
@@ -123,4 +130,4 @@ hist(estimates$ds.est, breaks = 50)
 mean(estimates$dsm.est)
 mean(estimates$ds.est)
 
-write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,transect.type,'zigzag.csv'))
+write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,'outside.csv'))
