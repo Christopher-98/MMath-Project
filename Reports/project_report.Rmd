@@ -562,23 +562,31 @@ kable(results.zigzag,
 From the results table above, it can be seen that in this case, the performance of both models was similar and each performed well in different areas compared to the each other. The mean estimate was again a slight overestimation and as a result, bias was slightly higher for DSM, however this difference was comparatively small. The Mean Std errors were lower for DSM and far closer to the Std Dev of the estimates, highlighting the better error estimation of DSM. However the Std Dev of the estimates was slightly smaller for the DS approach. The DS method also has a higher probability of truth being contained within its confidence intervals, at `r results.zigzag[6,2]` compared to `r results.zigzag[6,1]`, however this difference is likely due to the higher Std errors from the DS method wideing the confidence interval. Despite this, both methods achieved truth in their confidence intervals over the 95% significance level. The skewness scores for both are very similar and suggest again a slight right skew however this is very small. The kurtosis scores are very close to 3, suggesting the kurtosis is very similar to that of a normal distribution. In the Jarque-Bera test for normality, DSM and DS estimates return p-values of `r jarque.test(NSS.zig$dsm.est)$p.value` and `r jarque.test(NSS.zig$ds.est)$p.value` respectively. These indicate we can not reject the null hypothesis that these estimates are normally distributed. Overall, while the mean estimate appears in favour of the DS method, the DSM approach can be said to have performed better in this simulation, due to the small bias, lower Mean Std error and coefficients of variation. 
 
 
-# Modeling - Montrave
+# Modeling - Buckland 2015 Example
 
-For our final set of simulations to examine the capabilities of the DSM approach in respect to the DS method, I will revisit the the example simulation provided in Section 2.5.2 of @Buckland2015 and use both a DS and DSM approach to repeat these simulations. It must be noted that the original analysis was part of a survey design case study by Laura Marshall and used the R package DSsim @R-DSsim . For the purpose of this study, each of the designs and simulations will be translated into the _dsims_ @R-dsims package used throughout the remainder of the simulations to ensure comparability with the DSM approach developed. All details from the original designs will be kept constant, with the population being fixed at 1500 individuals and using a truncation distance of 1000m. For each of the surveys, a half-normal detection function with a scale parameter of 500 will be assumed. The density surfaced used is displayed below alongside the detection function in Figure \@ref(fig:Montdensdetect).
+For our next set of simulations to examine the capabilities of the DSM approach in respect to the DS method, I will revisit the the example simulation provided in Section 2.5.2 of @Buckland2015 and use both a DS and DSM approach to repeat these simulations. It must be noted that the original analysis was part of a survey design case study by Laura Marshall and used the R package DSsim @R-DSsim . For the purpose of this study, each of the designs and simulations will be translated into the _dsims_ @R-dsims package used throughout the remainder of the simulations to ensure comparability with the DSM approach developed. All details from the original designs will be kept constant, with the population being fixed at 1500 individuals and using a truncation distance of 1000m. For each of the surveys, a half-normal detection function with a scale parameter of 500 will be assumed. The density surfaced used is displayed below alongside the detection function in Figure \@ref(fig:Montdensdetect).
 ```{r Montdensdetect, fig.show = 'hold', out.width='50%', fig.cap='Density surface and detection function for Montrave region'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave density.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave detect.jpg')))
 ```
 
 
-The three different designs will be used, being the same as those tested in the case study. These will be a systematic parallel line design, a random parallel line design and a zigzag design. Examples of each design are displayed in Figure \@ref(fig:Montsurvey) below:
+The three different designs will be used, being the same as those tested in the case study in @Buckland2015. These will be a systematic parallel line design, a random parallel line design and a zigzag design. Examples of each design are displayed in Figure \@ref(fig:Montsurvey) below:
 
 ```{r Montsurvey, fig.show = 'hold', out.height='33%', fig.cap='Example surveys for each Design'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey random line.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey parallel line.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey zigzag.jpg')))
 ```
-As with each of the simulations run as part of the North Sea sections, 5000 simulations will be run for each design. While this is different from the 100 simulations conducted in @Buckland2015 , the increase in the number of simulations will increase the reliability of the results. 
+As with each of the simulations run as part of the North Sea section, 5000 simulations will be run for each design. While this is different from the 100 simulations originally conducted, the increase in the number of simulations will increase the reliability of the results.
+
+## Results - Random Parallel Line
+
+
+
+## Results - Systematic Parallel Line
+
+## Results - Zigzag Line
 
 
 # Modeling- Variance estimation tests
