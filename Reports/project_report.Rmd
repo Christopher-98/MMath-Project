@@ -579,7 +579,7 @@ plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave detect.jpg'))
 
 By using this study region, it is possible to verify the simulation method developed for DSM can be run on study regions with internal holes, such as islands on a seaborne survey. The three different designs will be used, being the same as those tested in the case study in @Buckland2015. These will be a systematic parallel line design, a random parallel line design and a zigzag design. Examples of each design are displayed in Figure \@ref(fig:Montsurvey) below:
 
-```{r Montsurvey, fig.show = 'hold', out.height='33%', fig.cap='Example surveys for each Design'}
+```{r Montsurvey, fig.show = 'hold', out.height='33%', fig.cap='Example surveys for each Design: Top Left: Random Parallel Line, Top Right: Systematic Parallell line, Bottom Left: Zigzag line'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey random line.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey parallel line.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey zigzag.jpg')))
@@ -690,7 +690,63 @@ kable(results.zig,
 
 # Modeling - North Sea Predictions outside study area:
 
-As mentioned within the simulation etentions section, the prediction grid for DSM is not limited to the area of the study region, it can be smaller or larger and does not even need to include any part of the study region. However, predicting populations outside of the original study region may be subject to large variations dependant on the gradient of the density surface at the edge of the region. This will be tested by using the same North Sea region we have explored before, however with two very contrasting density surfaces to show the two extremes of what could happen in this scenario. As this simulation will focus on predicting the abundance outside of the study region, the estimates from the DS method will not be compared here as the predictions will be made over a far larger area. As a simple example, the prediction grid used will be based on the bounding box of the North Sea region, in essence a large rectangle encompassing the entirety of the region. 
+As mentioned within the simulation etentions section, the prediction grid for DSM is not limited to the area of the study region, it can be smaller or larger and does not even need to include any part of the study region. However, predicting populations outside of the original study region may be subject to large variations dependant on the gradient of the density surface at the edge of the region. This will be tested by using the same North Sea region we have explored before, however with two very contrasting density surfaces to show the two extremes of what could happen in this scenario. As this simulation will focus on predicting the abundance outside of the study region, the estimates from the DS method will not be compared here as the predictions will be made over a far larger area. As a simple example, the prediction grid used will be based on the bounding box of the North Sea region, in essence a large rectangle encompassing the entirety of the region.
+
+The two contrasting density surfaces can be seen in Figure \@ref(fig:densityOut)
+```{r densityOut, fig.show = 'hold', out.width='50%', fig.cap='Density surface and detection function for Montrave region'}
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/NSout Low edge den.jpg')))
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/NSout High edge den.jpg')))
+```
+
+In a slight difference to the original simulations, the number of transects was reduced to 20 to reduce the amount of area covered by each study. All other aspects of the original simulation were kept the same, with the detection function  being a half normal function with a scale parameter of 5 with a truncation distance of 10.
+
+## Results
+
+```{r histNSout, fig.show = 'hold', out.width='50%', fig.cap='Histograms of DSM abundance estimates for the North Sea region when predicting outside the study region using different density surfaces'}
+NSout.high <-  read.csv('Estimates/North Sea Extreme5000outside.csv')
+NSout.low <-  read.csv('Estimates/North Sea Break5000outside.csv')
+
+hist(NSout.low$dsm.est,breaks = 50,
+     main = 'Histogram of estimates for Low edge density',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(NSout.low$dsm.est), col = 'red')
+
+hist(NSout.high$dsm.est,breaks = 50, 
+     main = 'Histogram of estimates for High edge density',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(NSout.high$dsm.est), col = 'red')
+
+```
+
+
+```{r resNSout}
+results.low <- read.csv('Results/results NSout Low edge den.csv')
+results.high <- read.csv('Results/results NSout High edge den.csv')
+
+results.dsm.low <- results.low$dsm.results
+results.dsm.high <- results.high$dsm.results
+
+results.outside <- data.frame(low = results.dsm.low,
+                              high = results.dsm.high)
+# remove bias and confidence interval coverage as not accurate
+
+results.outside <- results.outside[-c(2, 6), ]
+
+
+results.outside <-  results.outside %>%
+        `rownames<-`(c('Mean',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Estimate Skewness',
+                 'Estimate Kurtosis')) %>%
+        `colnames<-`(c('Low Edge Density', 'High Edge Density'))
+kable(results.outside,
+      caption = 'North Sea region with different densities when predicting outside the study region') %>%
+        add_header_above(c('Statistic' = 1, 'DSM results' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "hold_position")
+```
 
 \pagebreak
 # Discussion
