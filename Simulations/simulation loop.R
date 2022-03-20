@@ -23,7 +23,7 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea extreme Line.R') 
 
-source('Regions/North Sea Break Line.R')
+#source('Regions/North Sea Break Line.R')
 
 #source('Regions/Montrave region parallel line.R') 
 
@@ -31,20 +31,25 @@ source('Regions/North Sea Break Line.R')
 
 #source('Regions/Montrave region zigzag.R')
 
+#source('Regions/North Sea R2 estimator.R')
+
+#source('Regions/North Sea O2 estimator.R')
+
+source('Regions/North Sea S2 estimator.R')
 
 # select prediction grid to use:
 #   standard is cropped to study region
 #   outside region covers the entire bounding box of the study region
 
-#source('Simulations/prediction grid.R')
+source('Simulations/prediction grid.R')
 
-source('Simulations/outside region prediction grid.R')
+#source('Simulations/outside region prediction grid.R')
 
 # set transect type based on survey design
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 5000,
+sim <- make.simulation(reps = 100,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -82,7 +87,8 @@ for (j in 1:sim@reps) {
 	                     transect=transect.type,
 	                     formula=~1,
 	                     key=detect@key.function,
-	                     adjustment=NULL))
+	                     adjustment=NULL,
+	                     er.var = sim@ds.analysis@er.var))
   
   # save results to estimates
   estimates$ds.est[j] <- last(ds.mod$dht$individuals$N$Estimate)
