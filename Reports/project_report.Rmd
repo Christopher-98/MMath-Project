@@ -119,7 +119,7 @@ plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default_detect.jpg')))
 ```
 
 An example survey for each of the designs is displayed below in Figure \@ref(fig:defsurvey).
-```{r defsurvey, fig.show = 'hold', out.height='33%', fig.cap='Example Surveys for each design'}
+```{r defsurvey, fig.show = 'hold', out.height='33%', fig.cap='Example Surveys for the default region. Top: Point Transect design, Middle: Parallel line design, Bottom: Zigzag line design'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default survey point.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default survey line.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default survey zigzag.jpg')))
@@ -251,31 +251,33 @@ From Table \@ref(tab:resdefzig), despite the known issue, the DSM model performs
 
 # Modeling - North Sea
 
-Having gone through the process and results for the default region produced by _dsims_, a more complex example was created to further test the capabilities of the simulations with a real world example. This region with be in the area of the North sea off the east coast of the UK. As this would likely be a shipborne or airborne study, point transects are not realistic in this scenario, however they will be included for completeness. To assess the performance of both the distance sampling and density surface modelling approaches, point and line transect designs will be examined. These will be two point transect designs and four line transect designs, with one of each type using a stratified design with the region split in two. The standard designs will be compared first before examining the stratified designs. All designs used a truncation distance of 10 with the number of transects varying between the point and line transect designs. This difference is ensure the covered area of each study is similar to allow the results to be compared, as well as ensure sufficient observations to fit the detection function can be obtained. The density maps for stratified and non-stratified will be different to justify the use of different strata and examine the models ability to pick this up. These density surfaces can be seen in figure xx below.
-```{r crop = TRUE, fig.show='hold', out.width='50%'}
+Having gone through the process and results for the default region produced by _dsims_, a more complex example was created to further test the capabilities of the simulations with a real world example. This region with be in the area of the North sea off the east coast of the UK. As this would likely be a shipborne or airborne study, point transects are not realistic in this scenario, however they will be included for completeness. To assess the performance of both the distance sampling and density surface modelling approaches, point and line transect designs will be examined. These will be two point transect designs and four line transect designs, with one of each type using a stratified design with the region split in two. The standard designs will be compared first before examining the stratified designs. All designs used a truncation distance of 10 with the number of transects varying between the point and line transect designs. This difference is ensure the covered area of each study is similar to allow the results to be compared, as well as ensure sufficient observations to fit the detection function can be obtained. The density maps for stratified and non-stratified will be different to justify the use of different strata and examine the models ability to pick this up. These density surfaces can be seen in Figure \@ref(fig:NSden) below.
+```{r NSden, crop = TRUE, fig.show='hold', out.width='50%', fig.cap='Density surfaces for the basic and stratified North Sea regions'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North_Sea_density.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North_Sea_Strata_density.jpg')))
 
 ```
-As before, the detection function was kept identical between each design for both stratified and non-stratified. In this case it was a Half Normal detection function with a scale parameter of 5, which can be seen in Figure xxx below:
-```{r out.width='75%', fig.align='center'}
+As before, the detection function was kept identical between each design for both stratified and non-stratified. In this case it was a Half Normal detection function with a scale parameter of 5, which can be seen in Figure \@ref(fig:NSdet) below:
+```{r NSdet, out.width='75%', fig.align='center', , fig.cap='Plot of the detection function used in both the basic and stratified North Sea regions: A half Normal with scale parameter 5 and truncation 10'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North Sea Detect.jpg')))
 ```
 ## Non-Stratified Designs
 
-The point transect designs aimed for 70 samplers and the line transects for 25 samplers. The standard line designs consisted of a systematic parallel line design with transects perpendicular to the coast and a zigzag line design originating in the North of the region. An example of each design, including the point design, can be seen in figure xxx below:
-```{r fig.show = 'hold', out.width='33%'}
-knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey point.jpg'))
-knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey line.jpg'))
-knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey zigzag.jpg'))
+The point transect designs aimed for 70 samplers and the line transects for 25 samplers. The standard line designs consisted of a systematic parallel line design with transects perpendicular to the coast and a zigzag line design originating in the North of the region. An example of each design can be seen in Figure \@ref(fig:NSsurvey) below:
+```{r NSsurvey, fig.show = 'hold', out.width='45%', out.height='75%', fig.cap='Examples of surveys for the North Sea region. Top Left: Point Transect design, Top Right: Parallel line design, Bottom Left: Zigzag line design'}
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey point.jpg')))
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey line.jpg')))
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey zigzag.jpg')))
 ```
 
 The simulation was run 5000 times with the dsm model using a tweedie error distribution and the only covariates being spatial coordinates.
 
+\pagebreak
+
 ### Non Stratifed Results - Point Design
 
-For the point transect design, the histograms of the abundance estimates from each simulation run are displayed below in figure xxx:
-```{r fig.show = 'hold', out.width='50%'}
+For the point transect design, the histograms of the abundance estimates from each simulation run are displayed below in Figure \@ref(fig:histNSpoint):
+```{r histNSpoint, fig.show = 'hold', out.width='50%', fig.cap='Histograms of the abundance estimates for the North Sea region using a point transect design'}
 NS.point <- read.csv('Estimates/North Sea5000point.csv')
 
 hist(NS.point$dsm.est,
@@ -514,15 +516,7 @@ From Table \@ref(tab:resNSSline) above, it can be seen that in this case, the pe
 
 ### Stratifed Results - Zigzag Line Design
 
-error occuring:
-```{r}
-# Error in optimize(fnull, interval = search.int, family = family, y = y,  : 
-#   invalid 'xmin' value
-# In addition: Warning message:
-# In newton(lsp = lsp, X = G$X, y = G$y, Eb = G$Eb, UrS = G$UrS, L = G$L,  :
-#   Fitting terminated with step failure - check results carefully
-```
-Now examining the results of the zigzag line design, on the same density surface, we see the histograms of the two estimates below:
+Unfortunately, for the stratified zigzag design, an error intermittently occurred within the simulation which caused the fitting of the density surface model to fail. Upon further inspection, this error did not occur within any of the code written as part of this project. After consultation with L Marshall, the author of the _dsims_ package, it was determined the error likely occurred as a result of how some of the survey realisations within _dsims_ were constructed. This likely led to issues with the coordinates for the transects and segments, with this not being an issue within the DS model however the density surface model would not accept these, resulting in the error. It is outside the scope of this project to investigate the root cause of this error, therefore L Marshall was notified of the bug and given access to the code to determine the root cause. As mentioned, this error occurred intermittently, resulting in a full set of 5000 iterations not being run. However, the largest number run before the error occurred was xxx and these results are included below for completeness. Examining these results, we see the histograms of the two estimates below:
 
 ```{r fig.show = 'hold', out.width='50%'}
 NSS.zig <-  read.csv('Estimates/North Sea5000linezigzag.csv')
@@ -570,8 +564,8 @@ From the results table above, it can be seen that in this case, the performance 
 
 # Modeling - Buckland 2015 Example
 
-For our next set of simulations to examine the capabilities of the DSM approach in respect to the DS method, I will revisit the the example simulation provided in Section 2.5.2 of @Buckland2015 and use both a DS and DSM approach to repeat these simulations. It must be noted that the original analysis was part of a survey design case study by Laura Marshall and used the R package DSsim @R-DSsim . For the purpose of this study, each of the designs and simulations will be translated into the _dsims_ @R-dsims package used throughout the remainder of the simulations to ensure comparability with the DSM approach developed. All details from the original designs will be kept constant, with the population being fixed at 1500 individuals and using a truncation distance of 1000m. For each of the surveys, a half-normal detection function with a scale parameter of 500 will be assumed. The density surfaced used is displayed below alongside the detection function in Figure \@ref(fig:Montdensdetect).
-```{r Montdensdetect, fig.show = 'hold', out.width='50%', fig.cap='Density surface and detection function for Montrave region'}
+For our next set of simulations to examine the capabilities of the DSM approach in respect to the DS method, I will revisit the the example simulation provided in Section 2.5.2 of @Buckland2015 and use both a DS and DSM approach to repeat these simulations. It must be noted that the original analysis was part of a survey design case study by Laura Marshall and used the R package _DSsim_ @R-DSsim . For the purpose of this study, each of the designs and simulations will be translated into the _dsims_ @R-dsims package used throughout the remainder of the simulations to ensure comparability with the DSM approach developed. All details from the original designs will be kept constant, with the population being fixed at 1500 individuals and using a truncation distance of 1000m. For each of the surveys, a half-normal detection function with a scale parameter of 500 will be assumed. The density surfaced used is displayed below alongside the detection function in Figure \@ref(fig:Montdensdetect).
+```{r Montdensdetect, fig.show = 'hold', out.width='50%', fig.cap='Density surface and detection function for Buckland 2015 example'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave density.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave detect.jpg')))
 ```
@@ -584,7 +578,7 @@ plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey random
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey parallel line.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Montrave survey zigzag.jpg')))
 ```
-As with each of the simulations run as part of the North Sea section, 5000 simulations will be run for each design. While this is different from the 100 simulations originally conducted, the increase in the number of simulations will increase the reliability of the results.
+As with each of the simulations run as part of the North Sea section, 5000 iterations will be run for each design. While this is different from the 100 iterations originally conducted, the increase in the number of iterations will increase the reliability of the results.
 
 ## Results - Random Parallel Line
 
@@ -698,7 +692,7 @@ plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/NSout Low edge den.jpg
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/NSout High edge den.jpg')))
 ```
 
-In a slight difference to the original simulations, the number of transects was reduced to 20 to reduce the amount of area covered by each study. All other aspects of the original simulation were kept the same, with the detection function  being a half normal function with a scale parameter of 5 with a truncation distance of 10.
+In a slight difference to the original simulations, the number of transects was reduced to 20 to reduce the amount of area covered by each study. All other aspects of the original simulation were kept the same, with the detection function  being the same half normal function with a scale parameter of 5 with a truncation distance of 10 seen in Figure \@ref(fig:NSdet).
 
 ## Results
 
