@@ -135,8 +135,6 @@ generate.dsm.data <- function(region, survey, transect.type){
   # extract observation data
   obsdata <- survey@dist.data[!is.na(survey@dist.data$object),]
   
-  estimates$detections[j] <- nrow(obsdata)
-  
   # generate segments for dsm
   segs <- to_segments(region, survey, transect.type)
   
