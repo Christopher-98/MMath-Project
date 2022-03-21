@@ -1,7 +1,7 @@
 library(dsims)
 
 # region to be north sea shape file
-region <- make.region(region.name = "North Sea S2",
+region <- make.region(region.name = "North Sea O3",
                       shape = "Regions/RegionPrj.shp")
 
 cover <- make.coverage(region = region,
@@ -44,7 +44,7 @@ plot(detect, pop.desc)
 
 analyses <- make.ds.analysis(dfmodel = list(~1),
                              key = "hn",
-                             er.var = "S2",
+                             er.var = "O3",
                              truncation = design.trunc)
 
 sim <- make.simulation(reps = 1,
