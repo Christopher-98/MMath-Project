@@ -19,7 +19,7 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea Strata Line.R') 
 
-#source('Regions/North Sea Strata Line zigzag.R') 
+source('Regions/North Sea Strata Line zigzag.R') 
 
 #source('Regions/North Sea extreme Line.R') 
 
@@ -35,7 +35,7 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea O2 estimator.R')
 
-source('Regions/North Sea S2 estimator.R')
+#source('Regions/North Sea O3 estimator.R')
 
 # select prediction grid to use:
 #   standard is cropped to study region
@@ -49,7 +49,7 @@ source('Simulations/prediction grid.R')
 if (class(design) == "Line.Transect.Design") {transect.type <- 'line'
 } else {transect.type <- 'point'}
 
-sim <- make.simulation(reps = 100,
+sim <- make.simulation(reps = 5000,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
@@ -73,13 +73,17 @@ for (j in 1:sim@reps) {
   
   message("\r", j, " out of ", sim@reps,  " reps ",mods, " models successful \r", appendLF = FALSE)
   
+  # create a realisation of a survey
   survey <- run.survey(sim)
   
+  # get the data in the form required by dsm
   dsm.data <- generate.dsm.data(region, survey, transect.type)
   
   obsdata <- dsm.data$obsdata
   
   segdata <- dsm.data$segdata
+  
+  estimates$detections[j] <- nrow(obsdata)
   
   # distance sampling model
   ds.mod <- suppressMessages(ds(survey@dist.data,
@@ -88,7 +92,8 @@ for (j in 1:sim@reps) {
 	                     formula=~1,
 	                     key=detect@key.function,
 	                     adjustment=NULL,
-	                     er.var = sim@ds.analysis@er.var))
+	                     er.var = sim@ds.analysis@er.var)) 
+                       # some er.var not working, namely R4, S1, S2, O1.
   
   # save results to estimates
   estimates$ds.est[j] <- last(ds.mod$dht$individuals$N$Estimate)
@@ -136,4 +141,4 @@ hist(estimates$ds.est, breaks = 50)
 mean(estimates$dsm.est)
 mean(estimates$ds.est)
 
-write.csv(estimates, file = paste0('Estimates/',region@region.name, sim@reps,'outside.csv'))
+write.csv(estimates, file = paste0('Estimates/',region@region.name, transect.type, mods,'.csv'))
