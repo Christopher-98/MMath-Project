@@ -529,7 +529,7 @@ From Table \@ref(tab:resNSSline) above, it can be seen that in this case, the pe
 
 ### Stratifed Results - Zigzag Line Design
 
-Unfortunately, for the stratified zigzag design, an error intermittently occurred within the simulation which caused the fitting of the density surface model to fail. Upon further inspection, this error did not occur within any of the code written as part of this project. After consultation with L Marshall, the author of the _dsims_ package, it was determined the error likely occurred as a result of how some of the survey realisations within _dsims_ were constructed. This likely led to issues with the coordinates for the transects and segments, with this not being an issue within the DS model however the density surface model would not accept these, resulting in the error. It is outside the scope of this project to investigate the root cause of this error, therefore L Marshall was notified of the bug and given access to the code to determine the root cause. As mentioned, this error occurred intermittently, resulting in a full set of 5000 iterations not being run. However, the largest number run before the error occurred was xxx and these results are included below for completeness. Examining these results, we see the histograms of the two estimates below:
+Unfortunately, for the stratified zigzag design, an error intermittently occurred within the simulation which caused the fitting of the density surface model to fail. Upon further inspection, this error did not occur within any of the code written as part of this project. After consultation with L Marshall, the author of the _dsims_ package, it was determined the error likely occurred as a result of how some of the survey realisations within _dsims_ were constructed. This likely led to issues with the coordinates for the transects and segments, with this not being an issue within the DS model however the density surface model would not accept these, resulting in the error. It is outside the scope of this project to investigate the root cause of this error, therefore L Marshall was notified of the bug and given access to the code to determine the root cause. As mentioned, this error occurred intermittently, resulting in a full set of 5000 iterations not being completed in a single run. However, multiple runs were completed with the exact same conditions until a total of 5000 were completed, with these results being examined below. Examining these results, we see the histograms of the two abundance estimates below:
 
 ```{r fig.show = 'hold', out.width='50%'}
 NSS.zig <-  read.csv('Estimates/North Sea5000linezigzag.csv')
@@ -692,6 +692,73 @@ kable(results.zig,
 \pagebreak
 
 # Modeling - Variance estimation tests
+
+``` {r}
+results.R2 <- read.csv('Results/results NS R2 estimator.csv')
+
+results.R2$X <- NULL
+
+results.R2 <-  results.R2 %>%
+        `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage',
+                 'Estimate Skewness',
+                 'Estimate Kurtosis')) %>%
+        `colnames<-`(c('DSM results', 'DS results'))
+kable(results.R2,
+      caption = 'North Sea Line transect results with "R2" encounter rate variance estimator') %>%
+        add_header_above(c('Statistic' = 1, '"R2" estimator' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "hold_position")
+```
+
+``` {r}
+results.O2<- read.csv('Results/results NS O2 estimator.csv')
+
+results.O2$X <- NULL
+
+results.O2 <-  results.O2 %>%
+        `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage',
+                 'Estimate Skewness',
+                 'Estimate Kurtosis')) %>%
+        `colnames<-`(c('DSM results', 'DS results'))
+kable(results.O2,
+      caption = 'North Sea Line transect results with "O2" encounter rate variance estimator') %>%
+        add_header_above(c('Statistic' = 1, '"O2" estimator' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "hold_position")
+```
+
+``` {r}
+results.O3 <- read.csv('Results/results NS O3 estimator.csv')
+
+results.O3$X <- NULL
+
+results.O3 <-  results.O3 %>%
+        `rownames<-`(c('Mean',
+                 'Bias',
+                 'Mean Std error of estimates',
+                 'Std Dev of estimates',
+                 'Mean CV',
+                 'Confidence Interval Coverage',
+                 'Estimate Skewness',
+                 'Estimate Kurtosis')) %>%
+        `colnames<-`(c('DSM results', 'DS results'))
+kable(results.O3,
+      caption = 'North Sea Line transect results with "O3" encounter rate variance estimator') %>%
+        add_header_above(c('Statistic' = 1, '"O3" estimator' = 2)) %>%
+        kable_styling(position = 'center',
+                      latex_options = "hold_position")
+```
+
 
 \pagebreak
 
