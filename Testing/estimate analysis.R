@@ -3,7 +3,32 @@ library(moments)
 
 # load appropriate estimates file
 
-estimates <- read.csv('Estimates/North Sea R2500.csv')
+# load all files for North Sea Strat and combine estimates
+# estimates1 <- read.csv('Estimates/North Sea Strat904linezigzag.csv')
+# estimates2 <- read.csv('Estimates/North Sea Strat744linezigzag.csv')
+# estimates3 <- read.csv('Estimates/North Sea Strat300linezigzag.csv')
+# estimates4 <- read.csv('Estimates/North Sea Strat832linezigzag.csv')
+# estimates5 <- read.csv('Estimates/North Sea Strat404linezigzag.csv')
+# estimates6 <- read.csv('Estimates/North Sea Strat1043linezigzag.csv')
+# estimates7 <- read.csv('Estimates/North Sea Strat220linezigzag.csv')
+# estimates8 <- read.csv('Estimates/North Sea Stratline886.csv')
+# 
+# test <- rbind(estimates1,
+#               estimates2,
+#               estimates3,
+#               estimates4,
+#               estimates5,
+#               estimates6,
+#               estimates7,
+#               estimates8)
+# 
+# test <- test[test$dsm.est != 0, ]
+# test <- test[1:5000,]
+# 
+# write.csv(test, file = 'Estimates/North Sea Strat5000linezigzag.csv')
+
+
+estimates <- read.csv('Estimates/North Sea Strat5000linezigzag.csv')
 
 N = 1000
 
@@ -66,7 +91,7 @@ ds.results <- c(ds.mean,
 
 results <- cbind(dsm.results, ds.results)
 results
-write.csv(results, file = 'Results/results NS R2 estimator.csv')
+write.csv(results, file = 'Results/results NS Strat 5000 zigzag.csv')
 
 
 
