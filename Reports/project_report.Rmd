@@ -429,7 +429,7 @@ From the results table above, it can be seen that in this case, the performance 
 
 ## Stratified Designs
 
-For the stratified designs, it was decided to split the region into two strata, a large northern strata 'North' and a smaller southern strata 'South' to test how the simulation and both methods cope with a stratified design. The point transect designs aimed for 60 samplers, with 30 in each strata, and the line transects for 25 samplers with 10 in the North strata and 15 in the South strata.. The standard line designs consisted of a systematic parallel line design with transects perpendicular to the coast for both the North and South Stratum. The zigzag line design had the transects in the North strata originating in the North of the Strata, with a design angle of 90', while in the South Strata, transects originate on the Western boundary with a design angle of 0'. An example of each design, including the point design, can be seen in Figure \@ref(fig:NSSsurvey) below:
+For the stratified designs, it was decided to split the region into two strata, a large northern strata 'North' and a smaller southern strata 'South' to test how the simulation and both methods cope with a stratified design. The point transect designs aimed for 60 samplers, with 30 in each strata, and the line transects for 25 samplers with 10 in the North strata and 15 in the South strata. The standard line designs consisted of a systematic parallel line design with transects perpendicular to the coast for both the North and South Stratum. The zigzag line design had the transects in the North strata originating in the North of the Strata, with a design angle of 90', while in the South Strata, transects originate on the Western boundary with a design angle of 0'. An example of each design, including the point design, can be seen in Figure \@ref(fig:NSSsurvey) below:
 ```{r NSSsurvey, fig.show = 'hold', out.height='33%', fig.cap='Example surveys for each Stratified Design'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North Sea Strata survey point.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North Sea Strata survey line.jpg')))
@@ -441,7 +441,7 @@ The simulation was run 5000 times with the dsm model using a tweedie error distr
 ### Stratifed Results - Point Design
 
 For the point transect design, the histograms of the abundance estimates from each simulation run are displayed below in Figure \@ref(fig:histNSSpoint):
-```{r histNSSpoint, fig.show = 'hold', out.width='50%', fig.cap='Histograms of Point Design estimates for Straatified North Sea Region'}
+```{r histNSSpoint, fig.show = 'hold', out.width='50%', fig.cap='Histograms of Point Design abundance estimates for Stratified North Sea Region'}
 NSS.point <- read.csv('Estimates/North Sea Strat5000point.csv')
 
 hist(NSS.point$dsm.est,
@@ -532,7 +532,7 @@ From Table \@ref(tab:resNSSline) above, it can be seen that in this case, the pe
 Unfortunately, for the stratified zigzag design, an error intermittently occurred within the simulation which caused the fitting of the density surface model to fail. Upon further inspection, this error did not occur within any of the code written as part of this project. After consultation with L Marshall, the author of the _dsims_ package, it was determined the error likely occurred as a result of how some of the survey realisations within _dsims_ were constructed. This likely led to issues with the coordinates for the transects and segments, with this not being an issue within the DS model however the density surface model would not accept these, resulting in the error. It is outside the scope of this project to investigate the root cause of this error, therefore L Marshall was notified of the bug and given access to the code to determine the root cause. As mentioned, this error occurred intermittently, resulting in a full set of 5000 iterations not being completed in a single run. However, multiple runs were completed with the exact same conditions until a total of 5000 were completed, with these results being examined below. Examining these results, we see the histograms of the two abundance estimates below:
 
 ```{r fig.show = 'hold', out.width='50%'}
-NSS.zig <-  read.csv('Estimates/North Sea5000linezigzag.csv')
+NSS.zig <-  read.csv('Estimates/North Sea Strat5000linezigzag.csv')
 
 hist(NSS.zig$dsm.est,breaks = 50,
      main = 'Histogram of DSM estimates',
@@ -551,7 +551,7 @@ test <- wilcox.test(NS.zig$dsm.est, NS.zig$ds.est, paired = T, alternative = 'gr
 ```
 This returned a p-values of `r test$p.value` indicating at any significance level, the null hypothesis of the estimates being zero is rejected in favour of the alternate, that the DSM estimates are greater than those of DS. Examining the other statistics extracted from the simulation.
 ``` {r }
-results.zigzag <- read.csv('Results/results NS 5000 zigzag.csv')
+results.zigzag <- read.csv('Results/results NS Strat 5000 zigzag.csv')
 
 results.zigzag$X <- NULL
 

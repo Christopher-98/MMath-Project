@@ -141,4 +141,4 @@ hist(estimates$ds.est, breaks = 50)
 mean(estimates$dsm.est)
 mean(estimates$ds.est)
 
-write.csv(estimates, file = paste0('Estimates/',region@region.name, transect.type, mods,'.csv'))
+write.csv(estimates, file = paste0('Estimates/',region@region.name, mods,transect.type,'zigzag.csv'))
