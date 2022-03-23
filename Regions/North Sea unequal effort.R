@@ -43,7 +43,7 @@ pop.desc <- make.population.description(region = region,
                                         N = c(300,700))
 
 detect <- make.detectability(key.function = "hn",
-                             scale.param = c(5,01),
+                             scale.param = c(5,1),
                              truncation = design.trunc)
 plot(detect, pop.desc)
 
