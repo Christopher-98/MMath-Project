@@ -5,13 +5,14 @@ date: "`r Sys.Date()`"
 output: 
         bookdown::pdf_document2:
                 fig_caption: yes
+                toc: false
 
 fontsize: 12pt
 spacing: double
 bibliography: references.bib
 link-citations: true
----
 
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
@@ -27,8 +28,17 @@ library(moments)
 ```
 
 
+
 Decleration:
 _I certify that this project report has been written by me, is a record of work carried out by me, and is essentially different from work undertaken for any other purpose or assessment._
+
+All of the code discussed and used throughout this report can be found at the following GitHub repository: https://github.com/Christopher-98/MMath-Project
+
+\newpage
+\tableofcontents
+
+
+
 
 \pagebreak
 
@@ -305,7 +315,7 @@ From Table \@ref(tab:resdefzig), despite the known issue, the DSM model performs
 
 \pagebreak
 
-# Modeling - North Sea
+# Modeling - North Sea {#NS}
 
 Having gone through the process and results for the default region produced by _dsims_, a more complex example was created to further test the capabilities of the simulations with a real world example. This region with be in the area of the North sea off the east coast of the UK. As this would likely be a shipborne or airborne study, point transects are not realistic in this scenario, however they will be included for completeness. To assess the performance of both the distance sampling and density surface modelling approaches, point and line transect designs will be examined. These will be two point transect designs and four line transect designs, with one of each type using a stratified design with the region split in two. The standard designs will be compared first before examining the stratified designs. All designs used a truncation distance of 10 with the number of transects varying between the point and line transect designs. This difference is ensure the covered area of each study is similar to allow the results to be compared, as well as ensure sufficient observations to fit the detection function can be obtained. The density maps for stratified and non-stratified will be different to justify the use of different strata and examine the models ability to pick this up. These density surfaces can be seen in Figure \@ref(fig:NSden) below.
 ```{r NSden, crop = TRUE, fig.show='hold', out.width='50%', fig.cap='Density surfaces for the basic and stratified North Sea regions'}
@@ -375,7 +385,7 @@ kable(results.point,
         kable_styling(position = 'center',
                       latex_options = "hold_position")
 ```
-From the results table above, it can be observed that in this case, the DS method overall performed better than the DSM method, having a smaller bias as well as higher confidence interval converge, despite having a smaller Mean Std error. Additionally, the standard deviation of the estimates is slightly less for the DS method, however both methods do a relatively good job at estimating this. Additionally, we observe from the skewness statistics that both methods returned a positive statistic indicating the right-skewed as identified above, which suggests the right tail is longer and this is supported by some of the estimates being over 2000, with the maximums for DSM and DS being `r round(max(NS.point$dsm.est),2) ` and `r round(max(NS.point$ds.est),2)` respectively. The kurtosis figures for both methods are greater than 3, indicating we would expect more frequent outliers than a normal distribution   While the Mean CV for the DSM method is lower, the difference is marginal and does not out-way the bias or variance issues of this method. Overall this clearly seems to be a case where the DS method performs better than the DSm estimation method.
+From the results table above, it can be observed that in this case, the DS method overall performed better than the DSM method, having a smaller bias as well as higher confidence interval converge, despite having a smaller Mean Std error. Additionally, the standard deviation of the estimates is slightly less for the DS method, however both methods do a relatively good job at estimating this. Additionally, we observe from the skewness statistics that both methods returned a positive statistic indicating the right-skewed as identified above, which suggests the right tail is longer and this is supported by some of the estimates being over 2000, with the maximums for DSM and DS being `r round(max(NS.point$dsm.est),2) ` and `r round(max(NS.point$ds.est),2)` respectively. The kurtosis figures for both methods are greater than 3, indicating we would expect more frequent outliers than a normal distribution   While the Mean CV for the DSM method is lower, the difference is marginal and does not out-way the bias or variance issues of this method. Overall this clearly seems to be a case where the DS method performs better than the DSM estimation method.
 
 ### Non Stratifed Results - Parallel Line Design
 
@@ -691,20 +701,20 @@ In Table \@ref(tab:resMontrand) above, we can see the various statistics extract
 
 Moving on the systematic parallel line design, histograms of the abundance estimates are plotted below in Figure \@ref(fig:histMontline).
 ```{r histMontline, fig.show = 'hold', out.width='50%', fig.cap='Histograms of Systematic Parallel Line Design estimates for Buckland 2015 example region'}
-Mont.rand <-  read.csv('Estimates/Montrave5000linerandom.csv')
+Mont.para <-  read.csv('Estimates/Montrave5000lineparallel.csv')
 
-hist(Mont.rand$dsm.est,breaks = 50,
+hist(Mont.para$dsm.est,breaks = 50,
      main = 'Histogram of DSM estimates',
      xlab = 'DSM Abundance estimates')
-abline(v = mean(Mont.rand$dsm.est), col = 'red')
+abline(v = mean(Mont.para$dsm.est), col = 'red')
 
-hist(Mont.rand$ds.est,breaks = 50, 
+hist(Mont.para$ds.est,breaks = 50, 
      main = 'Histogram of DS estimates',
      xlab = 'DS Abundance estimates')
-abline(v = mean(Mont.rand$ds.est), col = 'red')
+abline(v = mean(Mont.para$ds.est), col = 'red')
 ```
 
-``` {r histMontline, fig.cap}
+``` {r resMontline}
 results.para <- read.csv('Results/results Montrave parallel.csv')
 
 results.para$X <- NULL
@@ -728,7 +738,21 @@ kable(results.para,
 
 ## Results - Zigzag Line
 
-``` {r}
+```{r histMontzig, fig.show = 'hold', out.width='50%', fig.cap='Histograms of Zigzag Line Design estimates for Buckland 2015 example region'}
+Mont.zig <-  read.csv('Estimates/Montrave5000linezigzag.csv')
+
+hist(Mont.zig$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(Mont.zig$dsm.est), col = 'red')
+
+hist(Mont.zig$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(Mont.zig$ds.est), col = 'red')
+```
+
+``` {r resMontzig}
 results.zig <- read.csv('Results/results Montrave zigzag.csv')
 
 results.zig$X <- NULL
@@ -754,8 +778,11 @@ kable(results.zig,
 
 # Modeling - Variance estimation tests
 
-As has been noted through the analysis of previous simulations, the variance estimation of the DS method has often performed poorly in comparison with that of the DSM approach. As noted within Section \@ref(dsims), the default 'R2' encounter rate variance estimator has been used throughout all of the simulations so far, as according to @Fewster this shows good performance for random line designs. However, many of the simulations run have used systematic line designs, for which it is noted that 'R2' may not perform well. In this case, @Fewster recommends using the 'O2' estimator.
-``` {r}
+As has been noted through the analysis of previous simulations, the variance estimation of the DS method has often performed poorly in comparison with that of the DSM approach. As noted within Section \@ref(dsims), the default 'R2' encounter rate variance estimator has been used throughout all of the simulations so far, as according to @Fewster this shows good performance for random line designs. However, many of the simulations run have used systematic line designs, for which it is noted that 'R2' may not perform well. In this case, @Fewster recommends using the 'O2' estimator. To investigate if changing the variance estimator improves the performance of the DS method, we return to the non stratified North Sea region in Section \@ref(NS). Here, the simulation will follow the same systematic line survey used previously, as seen in Figure \@ref(fig:NSsurvey) alongside the density surface seen in Figure \@ref(fig:NSden). The detection function was also kept constant, using a half normal function with a scale parameter of 5, as seen in Figure \@ref(fig:NSdet). The only difference between the two simulations is the specification of the encounter rate variance estimator, with one simulation using the 'R2' estimator and the other using the more appropriate 'O2' estimator as recommended by @Fewster.
+
+## Results
+
+``` {r resR2est}
 results.R2 <- read.csv('Results/results NS R2 estimator 5000.csv')
 
 results.R2$X <- NULL
@@ -777,7 +804,9 @@ kable(results.R2,
                       latex_options = "hold_position")
 ```
 
-``` {r}
+From Table \@ref(tab:resR2est) the same pattern as has been seen throughout this report is evident. The variance estimate, the Mean std error, for the DS method is far larger than the true variance, the Std Dev of the estimates, by over 60%. In comparison, the variance estimate for the DSM approach is only a slight overestimate at only around 10% higher. These then transfer into the coefficients of variation with the DSM having a respectively lower CV than that of the DS method. The confidence interval coverage for the DS method is very impressive, however this is likely due to the large variance estimates widening the confidence interval appreciably to contain truth. While the coverage for the DSM method is slightly lower, it is still above the 95% confidence limit and does not raise concerns. Overall in this case the DSM method can be said to have performed better, mainly due to the substantially better variance estimate and resulting coefficient of variation improvements over the DS method. 
+
+``` {r resO2est}
 results.O2<- read.csv('Results/results NS O2 estimator 5000.csv')
 
 results.O2$X <- NULL
@@ -799,34 +828,18 @@ kable(results.O2,
                       latex_options = "hold_position")
 ```
 
-``` {r}
-results.O3 <- read.csv('Results/results NS O3 estimator.csv')
+Moving on now to look at the results in Table \@ref(tab:resO2est), from when the variance estimator is set as the 'O2' estimator. It can be seen that there has been a significant improvement in the variance estimation in comparison to the 'R2' results above. The variance estimates for both methods are near identical now, with both being an overestimate of the true variance by around 10%. It appears that while the variance estimate for the DSM method is slightly closer than the DS approach, the difference is very marginal, highlighting the improvements to the estimation in the DS method. The confidence interval coverage for DS is slightly lower than previously, with this being the only statistic which appears worse for the 'O2' estimator than the 'R2' estimator. However this is likely due to the more representative variance estimate shrinking the confidence interval. Despite this, both methods acheived a confidence interval coverage above the 95% level. Overall in this case there is very little to differentiate between the two methods. It could be considered that the DS method performed better, as given that all other statistics are near identical, the mean estimate is closer to truth and as a result the bias is slightly smaller. However, the DSM method still performed well, with its bias being below 1%. 
 
-results.O3$X <- NULL
+These simulations have highlighted the improvements which can be made to the DS method to improve its variance estimation and make it comparable or possibly better than the DS method, if the particular design allows.
 
-results.O3 <-  results.O3 %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
-                 'Confidence Interval Coverage',
-                 'Estimate Skewness',
-                 'Estimate Kurtosis')) %>%
-        `colnames<-`(c('DSM results', 'DS results'))
-kable(results.O3,
-      caption = 'North Sea Line transect results with "O3" encounter rate variance estimator') %>%
-        add_header_above(c('Statistic' = 1, '"O3" estimator' = 2)) %>%
-        kable_styling(position = 'center',
-                      latex_options = "hold_position")
-```
+
 
 
 \pagebreak
 
 # Modeling - North Sea Predictions outside study area:
 
-As mentioned within the simulation etentions section, the prediction grid for DSM is not limited to the area of the study region, it can be smaller or larger and does not even need to include any part of the study region. However, predicting populations outside of the original study region may be subject to large variations dependant on the gradient of the density surface at the edge of the region. This will be tested by using the same North Sea region we have explored before, however with two very contrasting density surfaces to show the two extremes of what could happen in this scenario. As this simulation will focus on predicting the abundance outside of the study region, the estimates from the DS method will not be compared here as the predictions will be made over a far larger area. As a simple example, the prediction grid used will be based on the bounding box of the North Sea region, in essence a large rectangle encompassing the entirety of the region.
+As mentioned within the simulation extensions section, the prediction grid for DSM is not limited to the area of the study region, it can be smaller or larger and does not even need to include any part of the study region. However, predicting populations outside of the original study region may be subject to large variations dependant on the gradient of the density surface at the edge of the region. This will be tested by using the same North Sea region we have explored before, however with two very contrasting density surfaces to show the two extremes of what could happen in this scenario. As this simulation will focus on predicting the abundance outside of the study region, the estimates from the DS method will not be compared here as the predictions will be made over a far larger area. Additionally, there is no true population for the estimates to be compared against as the population of 1000 was only specified for the study region. As a simple example, the prediction grid used will be based on the bounding box of the North Sea region, in essence a large rectangle encompassing the entirety of the region.
 
 The two contrasting density surfaces can be seen in Figure \@ref(fig:densityOut)
 ```{r densityOut, fig.show = 'hold', out.width='50%', fig.cap='Density surface and detection function for Montrave region'}
@@ -837,6 +850,7 @@ plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/NSout High edge den.jp
 In a slight difference to the original simulations, the number of transects was reduced to 20 to reduce the amount of area covered by each study. All other aspects of the original simulation were kept the same, with the detection function  being the same half normal function with a scale parameter of 5 with a truncation distance of 10 seen in Figure \@ref(fig:NSdet).
 
 ## Results
+
 
 ```{r histNSout, fig.show = 'hold', out.width='50%', fig.cap='Histograms of DSM abundance estimates for the North Sea region when predicting outside the study region using different density surfaces'}
 NSout.high <-  read.csv('Estimates/North Sea Extreme5000outside.csv')
@@ -886,6 +900,13 @@ kable(results.outside,
 
 \pagebreak
 # Discussion
+
+- improve variance estimators within DS by allowing more to work with current simulations
+- further simulation investigates with covariates in both detection and spatial model
+- improve model checking process within simulation / computational cost
+- covariates varying at below segment scale
+
+# Conclusion
 
 \pagebreak
 # References {-}
