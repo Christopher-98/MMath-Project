@@ -28,7 +28,7 @@ library(moments)
 # write.csv(test, file = 'Estimates/North Sea Strat5000linezigzag.csv')
 
 
-estimates <- read.csv('Estimates/North Sea Strat5000linezigzag.csv')
+estimates <- read.csv('Estimates/North Sea O2line5000.csv')
 
 N = 1000
 
@@ -91,7 +91,7 @@ ds.results <- c(ds.mean,
 
 results <- cbind(dsm.results, ds.results)
 results
-write.csv(results, file = 'Results/results NS Strat 5000 zigzag.csv')
+write.csv(results, file = 'Results/results NS O2 estimator 5000.csv')
 
 
 

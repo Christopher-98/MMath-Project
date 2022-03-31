@@ -19,7 +19,7 @@ source('Simulations/helper functions.R')
 
 #source('Regions/North Sea Strata Line.R') 
 
-source('Regions/North Sea Strata Line zigzag.R') 
+#source('Regions/North Sea Strata Line zigzag.R') 
 
 #source('Regions/North Sea extreme Line.R') 
 
@@ -31,7 +31,7 @@ source('Regions/North Sea Strata Line zigzag.R')
 
 #source('Regions/Montrave region zigzag.R')
 
-#source('Regions/North Sea R2 estimator.R')
+source('Regions/North Sea R2 estimator.R')
 
 #source('Regions/North Sea O2 estimator.R')
 
@@ -141,4 +141,4 @@ hist(estimates$ds.est, breaks = 50)
 mean(estimates$dsm.est)
 mean(estimates$ds.est)
 
-write.csv(estimates, file = paste0('Estimates/',region@region.name, mods,transect.type,'zigzag.csv'))
+write.csv(estimates, file = paste0('Estimates/',region@region.name,transect.type, sim@reps,'.csv'))
