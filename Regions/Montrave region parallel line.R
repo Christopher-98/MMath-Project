@@ -62,7 +62,7 @@ analyses <- make.ds.analysis(dfmodel = list(~1),
                              truncation = design.trunc)
 
 
-sim <- make.simulation(reps = 1,
+sim <- make.simulation(reps = 10,
                        design = design,
                        population.description = pop.desc,
                        detectability = detect,
