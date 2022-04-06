@@ -1,7 +1,7 @@
 
 # create grid across the area of the region
 predgrid <- st_make_grid(st_bbox(region@region),
-                          cellsize = c(design.trunc*0.5, design.trunc*0.5))
+                          cellsize = c(0.5*design.trunc, 0.5*design.trunc))
 
 # crop grid to outline of region to allow ds comparison 
 predgrid <- st_intersection(predgrid, region@region)
