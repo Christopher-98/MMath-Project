@@ -1,0 +1,168 @@
+---
+title: "Marcuson - Technical Presentation"
+author: "Christopher Martin"
+date: "`r Sys.Date()`"
+output: powerpoint_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+
+library(knitr)
+```
+
+# Introduction
+
+The aim of this report is to detail to extensions made to the R package dsims through the inclusion of density surface modelling (dsm) simulations.
+
+# Plot sampling
+```{r crop = TRUE, fig.show='hold', out.width='50%'}
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Plot sampling example.jpg')))
+```
+# Distance sampling
+
+- Line transects
+- Point transects
+
+# Line transects
+```{r crop = TRUE, fig.show='hold', out.width='50%'}
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/DS line example.jpg')))
+```
+
+# Line transects - Detection function
+```{r crop = TRUE, fig.show='hold', out.width='50%'}
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/DS detect.jpg')))
+```
+
+# Density surface modelling
+
+- 1 or 2 stage approaches
+- Count per segment model
+$$ \mathbb{E}(n_j) = \hat{p_j}A_jexp[ \, \beta_0 + \sum_k f_k(z_{jk} ) ]\,$$
+
+# Simulation profile
+
+- Region and design specification.
+- Prediction grid generated.
+- For each run of the simulation:
+- - run a survey
+- -  coerce survey data into correct format
+- -  fit a distance sampling model
+- -  fit a density surface model
+- -  extract results
+  
+# Region and design specification
+
+- Region profile
+- Point or Line transect options.
+- Construct density surface
+- Describe population
+- Define detection function
+
+
+# Region and Density Surface
+```{r crop = TRUE, fig.show='hold', out.width='50%'}
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/NS region.jpg')))
+plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North_Sea_density.jpg')))
+```
+
+# Example survey designs
+```{r fig.show = 'hold', out.width='33%'}
+knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey point.jpg'))
+knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey line.jpg'))
+knitr::include_graphics(paste0(getwd(),'/Reports/Plots/North Sea survey zigzag.jpg'))
+```
+
+# Prediction Grid Generation
+
+```{r fig.show = 'hold', out.width='33%'}
+include_graphics(paste0(getwd(),'/Reports/Plots/Prediction grid.jpg'))
+```
+
+# Survey
+```{r fig.show = 'hold', out.width='33%'}
+include_graphics(paste0(getwd(),'/Reports/Plots/Montrave examp survey.jpg'))
+```
+
+# Data coercion
+
+- transects into segments
+- link observations to segments
+
+# Fit Distance sampling model
+
+ - ds( 
+ - - survey$dist.data,
+ - - truncation = design.trunc,
+ - - transect = transect.type,
+ - - formula = ~1,
+ - - key = key.function,
+ - - adjustment = NULL)
+
+# Fit DSM model
+
+ - dsm( 
+ - - count ~ s(x, y, k = sum(transects),
+ - - ddf.obj = ds.mod,
+ - - segment.data = segdata,
+ - - segment.area = segdata$Area,
+ - - observation.data = obsdata,
+ - - family = tw(),
+ - - transect = transect.type)
+
+# Results - Point transect
+```{r fig.show = 'hold', out.width='50%'}
+Mont.rand <-  read.csv('Estimates/Montrave5000linerandom.csv')
+
+hist(Mont.rand$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(Mont.rand$dsm.est), col = 'red')
+
+hist(Mont.rand$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(Mont.rand$ds.est), col = 'red')
+```
+
+# Results - Point transects
+
+
+# Results - Parallel Line
+```{r fig.show = 'hold', out.width='50%'}
+Mont.para <-  read.csv('Estimates/Montrave5000lineparallel.csv')
+
+hist(Mont.para$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(Mont.para$dsm.est), col = 'red')
+
+hist(Mont.para$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(Mont.para$ds.est), col = 'red')
+```
+
+# Results - Parallel Line
+
+# Results - Zigzag Line
+```{r fig.show = 'hold', out.width='50%'}
+Mont.zig <-  read.csv('Estimates/Montrave5000linezigzag.csv')
+
+hist(Mont.zig$dsm.est,breaks = 50,
+     main = 'Histogram of DSM estimates',
+     xlab = 'DSM Abundance estimates')
+abline(v = mean(Mont.zig$dsm.est), col = 'red')
+
+hist(Mont.zig$ds.est,breaks = 50, 
+     main = 'Histogram of DS estimates',
+     xlab = 'DS Abundance estimates')
+abline(v = mean(Mont.zig$ds.est), col = 'red')
+```
+
+# Results - Zigzag Line
+
+# Further investigations
+
+# Conclusions
+
