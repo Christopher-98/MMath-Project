@@ -1,5 +1,5 @@
 library(dsims)
-region <- make.region(region.name = "Montrave",
+region <- make.region(region.name = "Buckland 2015",
                       shape = "Regions/Region.shp")
 
 cover <- make.coverage(region = region,
@@ -73,7 +73,7 @@ plot(survey)
 
 survey@dist.data[!is.na(survey@dist.data$object),]
 
-# jpeg("Reports/Plots/Montrave survey parallel line.jpg")
-# plot(region, samplers)
-# dev.off()
+jpeg("Reports/Plots/Montrave survey parallel line.jpg")
+plot(region, samplers)
+dev.off()
 
