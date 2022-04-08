@@ -31,7 +31,7 @@ library(moments)
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/university crest.jpg')))
 ```
 
-Decleration:
+Declaration:
 _I certify that this project report has been written by me, is a record of work carried out by me, and is essentially different from work undertaken for any other purpose or assessment._
 
 All of the code discussed and used throughout this report can be found at the following GitHub repository: https://github.com/Christopher-98/MMath-Project
@@ -48,19 +48,19 @@ All of the code discussed and used throughout this report can be found at the fo
 
 Abundance estimation for wildlife populations is a key area of applied ecological research, with one of the most common techniques used for being distance sampling. This assumes not all animals are detected within the study area and uses detection distances to fit a function accounting for those missed. Density surface modelling (DSM) extends this idea by using these detection distance and creating a spatial model, from which abundance predictions can be generated across the study area. This report has focused on incorporating DSM within the existing distance sampling simulations, to allow designs to be examined by both distance sampling analysis and density surface modelling.
 
-A variety of simulations were constructed across different regions, with each simulation aiming to examine a particular area of interest. The results of these produced intriguing conclusions. DSM appears to have a positive bias, overestimating the true abundance in every simulation. For Point designs, DSM gives little improvement over the existing distance sampling approach. However, for line transects, variance estimation using the default estimators indicated that distance sampling overestimates the variance. This lead to DSM having more precise abundance estimates, as noted by @Miller2013. In efforts to improve this, using more appropriate variance estimators was identified as a suitable adjustment, provided the design permitted this. An alternative to this was discovered when the region was stratified, with the variance estimates in these cases being comparable between distance sampling and DSM. 
+A variety of simulations were constructed across different regions, with each simulation aiming to examine a particular area of interest. The results of these produced intriguing conclusions. DSM appears to have a positive bias, overestimating the true abundance in every simulation. For point transect designs, DSM gives little improvement over the existing distance sampling approach. However, for line transects, variance estimation using the default estimators indicated that distance sampling overestimates the variance. This lead to DSM having more precise abundance estimates, as noted by @Miller2013. Using more appropriate variance estimators was identified as a solution to this, provided the design permitted this. An alternative to this was discovered when the region was stratified, with the variance estimates in these cases being comparable between distance sampling and DSM. Overall, variance estimation identified as a key area of further research, with the potential to greatly improve the precision of both approaches.
 
 \pagebreak 
 
 # Introduction
 
-One of the key aims in areas of applied ecological research is to determine the abundance of a particular population of interest, such as in a periodic way to monitor its development over time and determine changes, or to evaluate the potential effect of a new factor, such as a human disturbance. The size of the population can determine the importance of any new factors, with a smaller populations more under threat from a given factor compared to an abundant one @Buckland2015.
+One of the key aims in areas of applied ecological research is to determine the abundance of a particular population of interest, such as in a periodic way to monitor its development over time and determine changes, or to evaluate the potential effect of a new factor, such as a human disturbance. The size of the population can determine the importance of any new factors, with a smaller populations more under threat from a given factor compared to an abundant one (@Buckland2015).
 
 The aim of this report is to examine and investigate through simulations the extensions made to the _dsims_ R package through the inclusion of density surface modelling (DSM) simulations. The intended readership of this report are biologists or ecologists with statistical experience in distance sampling for estimating wildlife abundance. Further knowledge on distance sampling survey design would be beneficial to understanding some elements of the report in greater detail however this is not required.
 
-Distance Sampling (@Buckland2001) is an extensive set of techniques used for estimating abundance within biological populations. These techniques have been widely used in both terrestrial ecology and aquatic studies to determine population size or density. The key idea of this approach is the assumption that not all animals are observed. Therefore, the probability of an animal being detected is estimated using the recorded distances at which observations are made. This allows for the total observations to be corrected to account for those animals missed and achieve an overall abundance estimate (@Buckland2015).
+Distance Sampling (@Buckland2001) is an extensive set of techniques used for estimating abundance within biological populations. These techniques have been widely used in both terrestrial ecology and aquatic studies to determine population size or density. The key idea of this approach is the assumption that not all animals are observed. Therefore, the probability of an animal being detected is estimated using the recorded distances at which detections are made. This allows for the total observations to be corrected to account for those animals missed and achieve an overall abundance estimate (@Buckland2015).
 
-Density surface modelling builds upon the techniques of distance sampling by relating animal density to spatial variables within the environment, such as topology and habitat, while still correcting for animals not observed. The goal of this is to provide more information to wildlife managers to allow them to more appropriately manage the environment and the animals within @Hedley2004. This has lead to an increase in demand for spatial models, especially for analysing line transect data. These models, in addition to providing abundance estimates, allow for relationships between covariates and abundance to be investigated (@Miller2013).
+Density surface modelling builds upon the techniques of distance sampling by relating animal density to spatial variables within the environment, such as topology and habitat, while still correcting for animals not observed. The goal of this is to provide more information to wildlife managers to allow them to more appropriately manage the environment and the animals within (@Hedley2004). This has lead to an increase in demand for spatial models, especially for analysing line transect data. These models, in addition to providing abundance estimates, allow for relationships between covariates and abundance to be investigated (@Miller2013).
 
 The _dsims_ R package (@R-dsims) was created to allow researchers to randomise the construction of distance sampling designs to examine both the efficiency and bias of different designs with the goal of selecting the optimum survey design. This provides a great benefit to researchers, as failing to randomise the design selection can result in abundance estimates having considerable bias (@Buckland2015).
 
@@ -68,7 +68,7 @@ Currently, _dsims_ does not fit a density surface model during the course of its
 
 The more precise abundance estimates provided by density surface modelling, identified by @Kat2007, alongside smaller variance estimates noted by @Miller2013, are the key reasons for the inclusion of density surface modelling within simulation set-up. The inclusion therefore provides an added level of assurance to design selection decisions, as distance sampling simulations are used to determine the optimum survey design to estimate animal abundance for real world studies. For example, if a researcher wishes to undertake both density surface modelling and distance sampling analysis, the inclusion of both within the simulation at the design stage provides assurances that the optimum design for distance sampling analysis is also the optimum design for density surface modelling. Should there be no design which is optimum for both methods, the researcher can select which analysis type they wish prioritise and determine the optimum design for this.
 
-Simulations will be designed and implemented to compare the accuracy and precision of abundance estimates generated through the design based approach, distance sampling, and the model based approach, density surface modelling. This is to ensure that the density surface modelling approach has successfully been implemented into the simulation set-up alongside the existing distance sampling approach.
+Simulations will be designed and implemented to compare the accuracy and precision of abundance estimates generated through the design based approach, distance sampling (DS), and the model based approach, density surface modelling (DSM). This is to ensure that the density surface modelling approach has successfully been implemented into the simulation set-up alongside the existing distance sampling approach.
 
 \pagebreak
 
@@ -95,7 +95,7 @@ $$ \hat{N} = \frac{nA}{k\pi w^2} $$
 
 The one of most widely used methods of sampling for ecological populations is distance sampling, where information on the detectability of animals comes from the distances at which observations are made.
 
-Distance sampling was first introduced by @Buckland1993 and includes a variety of designs such  as line and point transect sampling, which can then be used to estimate animal abundance using information on the distances to the individuals or clusters observed. The underpinning theory is that if the probability of animal detection can be estimated based on the sample observed, this can allow for estimates on how many animals were not observed and can therefore correct the abundance estimates to take this information into account. 
+Distance sampling was first introduced by @Buckland1993 and includes a variety of designs such as line and point transect sampling, which can then be used to estimate animal abundance using information on the distances to the individuals or clusters observed. The underpinning theory is that if the probability of animal detection can be estimated based on the sample observed, this can allow for estimates on how many animals were not observed and can therefore correct the abundance estimates to take this information into account. 
 
 Distance sampling can therefore be thought of as a method of plot sampling, with the additional factor of not every animal on the plots being observed. The two simple designs of distance sampling are the same as those for plot sampling, with line transect sampling and point transect sampling designs available.
 
@@ -106,7 +106,7 @@ To take into account the fact that not all animals or clusters within each trans
 
 The detection function is estimated using the distances to the animals observed, _x_ for line transects and _r_ for point transects, to fit a function $g(x)$, defined as "the probability of detecting an animal that is distance _x_ $(0\le x \le w)$ from the line" (@Buckland2015). This can be similarly defined as $g(r)$ for point transects where _r_ $(0\le r \le w)$ is the distance from the point.
 
-The normal technique is to assume that all animals on the point or line are definitely observed, such that $g(0) = 1$ and the observations are scaled to account for this. An example of a fitted detection function is seen in Figure \@ref(fig:exdet) . A further assumption is that the population is uniformly distributed about the transect, signified by the blue line in Figure \@ref(fig:exdet). The scaled observations are then plotted and a detection function fitted to these, representing the observed distribution of animals. The aim of this is to establish the proportion of animals observed in the study, allowing for those not observed to be accounted for. Those not observed are represented by the difference between the blue box and the red detection in Figure \@ref(fig:exdet) from @Workshop. 
+The normal technique is to assume that all animals on the point or line are definitely observed, such that $g(0) = 1$ and the observations are scaled to account for this. An example of a fitted detection function is seen in Figure \@ref(fig:exdet). A further assumption is that the population is uniformly distributed about the transect, signified by the blue line in Figure \@ref(fig:exdet). The scaled observations are then plotted and a detection function fitted to these, representing the observed distribution of animals. The aim of this is to establish the proportion of animals observed in the study, allowing for those not observed to be accounted for. Those not observed are represented by the difference between the blue box and the red detection in Figure \@ref(fig:exdet) from @Workshop. 
 ```{r exdet, out.width='75%', fig.align='center', fig.cap= 'Example of a detection function is fitted to the observed distances. Blue box represents the assumed distibution of animals, uniform about the transect. Red curve represents a detection function fitted to the observation data ' }
 plot_crop(include_graphics(paste0(getwd(),"/Reports/Plots/fitted detect.jpg")))
 ```
@@ -137,7 +137,7 @@ The main considerations when constructing the design are the type, either line o
 
 A further parameter that must be set it whether plus or minus sampling should be used. Plus sampling is where the transects extend beyond the survey region into a buffer zone of distance _w_ from the edge, however only observations within the survey region are recorded. With minus sampling, transects end at the edge of the study region and do not extend beyond. Minus sampling will be used for all simulations throughout the remainder of this report. This is because in reality, most studies conduct minus sampling due to the additional cost associated with running a plus sampling survey, in addition to the fact that _dsims_ does not support plus sampling simulations at the present time.
 
-Based on the design, a realisation of the survey transects can be generated, during which the detection process is simulated. The user can then define a detection function, based on either a half normal ('hn') or hazard rate ('hr') with a defined scale parameter and the desired truncation distance _w_, with the hazard rate function also requiring a shape parameter. Examples of these can be seen in Figure \@ref(fig:detect):
+Based on the design, a realisation of the survey transects can be generated, during which the detection process is simulated. The user can then define a detection function, based on either a half normal ('hn') or hazard rate ('hr') with a defined scale parameter and the desired truncation distance _w_, with the hazard rate function also requiring a shape parameter. Examples of these can be seen in Figure \@ref(fig:detect).
 ```{r detect,  fig.show = 'hold', out.width='50%', fig.cap='Examples of different detection functions with a truncation distance of 50: Left: Half Normal with scale parameter 25, Right: Hazard Rate with scale parameter 25 and shape parameter 5'}
 plot_crop(include_graphics(paste0(getwd(),"/Reports/Plots/hn_detectfunc.jpg")))
 plot_crop(include_graphics(paste0(getwd(),"/Reports/Plots/hr_detectfunc.jpg")))
@@ -205,7 +205,7 @@ The model used when the count per segment is used as the response is:
 
 $$ \mathbb{E}(n_j) = \hat{p_j}A_jexp[ \, \beta_0 + \sum_k f_k(z_{jk} ) ]\,$$
 
-Where $f_k$ are the smoothed functions of the covariates and $\beta_0$ is the intercept term. By multiplying the segment area $A_j$ by the estimated probability of detection $p_j$ this gives the effective area of the segment, acting as an offset to account for different segment areas. Where distance is the only covariate in the detection function, $p_j$ is constant across all segments and therefore $\hat{p_j} = \hat{p} \forall j$. The distribution of $n_j$ can then be modeled using an overdispersed Poisson, Negative binomial or Tweedie distribution. 
+Where $f_k$ are the smoothed functions of the covariates and $\beta_0$ is the intercept term. By multiplying the segment area $A_j$ by the estimated probability of detection $p_j$ this gives the effective area of the segment, acting as an offset to account for different segment areas. Where distance is the only covariate in the detection function, $p_j$ is constant across all segments and therefore $\hat{p_j} = \hat{p} \forall j$. The distribution of $n_j$ can then be modelled using an over-dispersed Poisson, Negative binomial or Tweedie distribution. 
 
 An alternative to using this is to use abundance estimates for each segment generated by distance sampling as the response. To do this, the response $n_j$ is replaced by an estimator of the abundance in each section, $\hat{N_j}$ where this is defined as: 
 $$ \hat{N_j} = \sum_{r = 1}^{R_j}  \frac{s_{jr}}{\hat{p_j}}$$
@@ -220,7 +220,7 @@ To allow for a DSM to predict abundance, a series of prediction cells must be de
 
 # Simulation extentions
 
-This section details the extensions I made to the dsims package Marshall (2021) as part of this project.
+This section details the extensions I made to the _dsims_ package (@R-dsims) as part of this project.
 
 ## Prediction Grid
 
@@ -240,7 +240,7 @@ Once the segment areas have been calculated, the segments can be linked to the o
 
 ## Modeling
 
-Based on this data, both a distance sampling model and density surface model are constructed, with the DSM modeling the counts against the smooth of spatial locations using a tweedie error distribution. This error distribution is used as it offers a greater degree of flexibility than the dispersed-poisson or negative binomial (@Miller2013). The formulas for both could be changed to include environmental or other covariates such as strata, allowing for different detection functions to be fit to each strata.
+Based on this data, both a distance sampling model and density surface model are constructed, with the DSM modelling the counts against the smooth of spatial locations using a tweedie error distribution. This error distribution is used as it offers a greater degree of flexibility than the dispersed-poisson or negative binomial (@Miller2013). The formulas for both could be changed to include environmental or other covariates such as strata, allowing for different detection functions to be fit to each strata.
 
 In the smoothed term, the degrees of freedom is restricted to the total number of transects, as without doing this, the simulation was prone to failing to fit a model. The limit for this is the number of segments in the model, which in the case of point transects is the total number of transects. While this could be far larger for line transects, this would increase the computational requirements beyond a reasonable level and without offering a significant improvement, added to the fact that this model will be run within a simulation which is already computationally intensive. The abundance estimates are extracted from both models and stored alongside other statistics from each including the standard errors and confidence intervals for each model.
 
@@ -256,7 +256,7 @@ The aim of conducting this simulation to is to examine a very simplistic region 
 
 ## Methods
 
-This simulation was set up using the default region generated by _dsims_ @R-dsims, a 500m by 2000m rectangle, with the truncation distance selected at 60m. A basic test density was then constructed for the region with high and low spots as seen  in Figure \@ref(fig:defregion) with relatively gently gradients. This was chosen as the aim of this simulation is to to test a very simplistic set-up and defining the density in this way aligns with this aim. 
+This simulation was set up using the default region generated by _dsims_ @R-dsims, a 500m by 2000m rectangle, with the truncation distance selected at 60m. A basic test density was then constructed for the region with high and low spots as seen in Figure \@ref(fig:defregion) with relatively gently gradients. This was chosen as the aim of this simulation is to to test a very simplistic set-up and defining the density in this way aligns with this aim. 
 
 ``` {r defregion, crop = TRUE, fig.cap='Density surface used for the Default region'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default_density.jpg')))
@@ -268,7 +268,7 @@ A population description was constructed based on this density surface with a tr
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default_detect.jpg')))
 ```
 
-The designs used are the only part which change between the different simulations, other than the variance estimators as necessitated. Both point and line transect designs were constructed, with a systematic point design being specified alongside two different line designs, a systematic parallel line design and a complementary zigzag line design. The point design aimed of 25 points while both line designs aimed for 12 transects. An example survey for each of the designs is displayed  in Figure \@ref(fig:defsurvey). .
+The designs used are the only part which change between the different simulations, other than the variance estimators as necessitated. Both point and line transect designs were constructed, with a systematic point design being specified alongside two different line designs, a systematic parallel line design and a complementary zigzag line design. The point design aimed of 25 points while both line designs aimed for 12 transects. An example survey for each of the designs is displayed in Figure \@ref(fig:defsurvey).
 ```{r defsurvey, fig.show = 'hold', out.height='33%', fig.cap='Example Surveys for the default region. Top: Point Transect design, Middle: Parallel line design, Bottom: Zigzag line design'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default survey point.jpg')))
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default survey line.jpg')))
@@ -279,7 +279,7 @@ plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/Default survey zigzag.
 
 \pagebreak
 
-```{r defreal, fig.show = 'hold', out.height='75%', fig.cap='Example Survey realisation for the default region using the Parallel line design. Red dots highlight individuals not observed. Blue dots represent individuals observed. Dark Blue lines represent the transects and the shaded areas either side show the area of observation out to the truncation distance. Histogram below denoted the detection distance, upon which a detection function will be fitted'}
+```{r defreal, fig.align='center', fig.show = 'hold', out.height='75%', fig.cap='Example Survey realisation for the default region using the Parallel line design. Black dots highlight individuals not observed. Light blue dots represent individuals observed. Dark Blue lines represent the transects and the shaded areas either side show the area of observation out to the truncation distance. Histogram below denoted the detection distance, upon which a detection function will be fitted'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/default example survey.jpg')))
 ```
 
@@ -291,9 +291,9 @@ plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/default example survey
 
 `r default.point <- read.csv('Estimates/Default1000point.csv') `
 
-For the initial default region with the point transect design, the histograms of both the distance sampling and DSM abundance estimates are displayed  in Figure \@ref(fig:histdefpoint). These plots show that the estimates for both the DSM and DS methods appeared fairly symmetrical around the true abundance, with a slight right skew present. If we now compare the means of the two approaches, the mean of DSM estimates was `r round(mean(default.point$dsm.est), 2)` and the mean of DS estimates was `r round(mean(default.point$ds.est), 2)` from Table \@ref(tab:resdefpoint). It can be seen that the mean of the DSM estimates appears further from the true population of 1000 than the mean of the distance sampling estimates.
+For the initial default region with the point transect design, the histograms of both the distance sampling and DSM abundance estimates are displayed in Figure \@ref(fig:histdefpoint). These plots show that the estimates for both the DSM and DS methods appeared fairly symmetrical around the true abundance, with a slight right skew present. If we now compare the means of the two approaches, the mean of DSM estimates was `r round(mean(default.point$dsm.est), 2)` and the mean of DS estimates was `r round(mean(default.point$ds.est), 2)` from Table \@ref(tab:resdefpoint). It can be seen that the mean of the DSM estimates appears further from the true population of 1000 than the mean of the distance sampling estimates.
 
-```{r histdefpoint, fig.show = 'hold', out.width='50%' , fig.cap='Histograms of  abundance estimates for Default region using a point transect design: Left- DSM approach, Right- DS aproach. The red line in each denotes the mean of each set of estimates'}
+```{r histdefpoint, fig.show = 'hold', out.width='50%' , fig.cap='Histograms of abundance estimates for Default region using a point transect design: Left- DSM approach, Right- DS aproach. The red line in each denotes the mean of each set of estimates'}
 
 
 hist(default.point$dsm.est,breaks = 50,
@@ -315,11 +315,11 @@ Table \@ref(tab:resdefpoint) provides statistics which allow us to compare the p
 ```{r resdefpoint}
 
 results.point <- results.point %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -335,7 +335,7 @@ kable(results.point,
 ### Default Region parallel Line design
 `r default.line <-  read.csv('Estimates/Default1000line.csv')`
 
-Now examining the results of the line transect design, we see the histograms of the two estimates  in Figure \@ref(fig:histdefline). These plots are very similar to their point transect counterparts, with the mean appearing close to truth and a right skewness observed. Investigating this further, we find the mean of DSM estimates to be `r round(mean(default.line$dsm.est),2) ` and the mean of DS estimates to be `r round(mean(default.line$ds.est),2)` from Table \@ref(tab:resdefline), with these estimates being very close to the true value.
+Now examining the results of the line transect design, we see the histograms of the two estimates in Figure \@ref(fig:histdefline). These plots are very similar to their point transect counterparts, with the mean appearing close to truth and a right skewness observed. Investigating this further, we find the mean of DSM estimates to be `r round(mean(default.line$dsm.est),2) ` and the mean of DS estimates to be `r round(mean(default.line$ds.est),2)` from Table \@ref(tab:resdefline), with these estimates being very close to the true value.
 
 ```{r histdefline, fig.show = 'hold', out.width='50%', fig.cap='Histograms of abundance estimates for Default region using a parallel line design: Left- DSM approach, Right- DS aproach. The red line in each denotes the mean of each set of estimates'}
 
@@ -358,11 +358,11 @@ From Table \@ref(tab:resdefline), it can be observed that both methods have very
 ``` {r resdefline}
 
 results.line <-  results.line %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -377,7 +377,7 @@ kable(results.line,
 ### Default Region Zigzag Line design
 `r default.zig <-  read.csv('Estimates/Default1000linezigzag.csv')`
 
-Now examining the results of the zigzag line transect design, the histograms of the abundance estimates are displayed  in Figure \@ref(fig:histdefzig) These plots differ slightly to their point and parallel line counterparts, with the mean appearing further away from truth than previously as well as a more rounded shape then before. Investigating this further, we find the means of DSM estimates to be `r round(mean(default.zig$dsm.est),2)` and the mean of DS estimates to be `r round(mean(default.zig$ds.est), 2)` from Table \@ref(tab:resdefzig).
+Now examining the results of the zigzag line transect design, the histograms of the abundance estimates are displayed in Figure \@ref(fig:histdefzig) These plots differ slightly to their point and parallel line counterparts, with the mean appearing further away from truth than previously as well as a more rounded shape then before. Investigating this further, we find the means of DSM estimates to be `r round(mean(default.zig$dsm.est),2)` and the mean of DS estimates to be `r round(mean(default.zig$ds.est), 2)` from Table \@ref(tab:resdefzig).
 
 ```{r histdefzig, fig.show = 'hold', out.width='50%' , fig.cap='Histograms of  abundance estimates for Default region using a zigzag line design: Left- DSM approach, Right- DS aproach. The red line in each denotes the mean of each set of estimates'}
 
@@ -399,11 +399,11 @@ From Table \@ref(tab:resdefzig), it can be observed that both methods have a bia
 
 
 results.zig <- results.zig %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -434,12 +434,12 @@ To assess the performance of the distance sampling and density surface modelling
 
 ### Methods {#NSmeth}
 
-As with the default region simulation, a systematic point design will be used alongside two line designs, systematic parallel line design and a complimentary zigzag line design, with all designs used a truncation distance of 10km.  The density maps for stratified and non-stratified will be different to justify the use of different strata, with density surface used for the Non-Stratified designs seen in Figure \@ref(fig:NSden) .
+As with the default region simulation, a systematic point design will be used alongside two line designs, systematic parallel line design and a complimentary zigzag line design, with all designs used a truncation distance of 10km.  The density maps for stratified and non-stratified will be different to justify the use of different strata, with density surface used for the Non-Stratified designs seen in Figure \@ref(fig:NSden).
 ```{r NSden, crop = TRUE, fig.show='hold', out.width='75%',fig.align='center', fig.cap='Density surface for the basic North Sea regions'}
 plot_crop(include_graphics(paste0(getwd(),'/Reports/Plots/North_Sea_density.jpg')))
 ```
 A population description was constructed based on this density surface with a true population
-of 1000. The detection function for simulating detections was kept identical between each design, with this being specified as a half normal detection function with a scale parameter of 5. This can be seen in Figure \@ref(fig:NSdet) . This is separate to the detection function
+of 1000. The detection function for simulating detections was kept identical between each design, with this being specified as a half normal detection function with a scale parameter of 5. This can be seen in Figure \@ref(fig:NSdet). This is separate to the detection function
 which is fitted to the survey data during the analysis phase. Here, the model to be fitted was
 a half normal function with no covariates included. The encounter rate variance estimators
 for the analysis stage are set as their defaults, ‘P3’ for the point designs and ‘R2’ for both
@@ -492,11 +492,11 @@ From the results in Table \@ref(tab:resNSpt), it can be observed that in this ca
 ``` {r resNSpt}
 
 results.point <-  results.point %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -542,11 +542,11 @@ From the results in Table \@ref(tab:resNSline), it can be seen that in this case
 
 
 results.line <-  results.line %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -589,11 +589,11 @@ From the results in Table \@ref(tab:resNSzig), it can be seen that in this case,
 
 
 results.zigzag <-  results.zigzag %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -662,11 +662,11 @@ From Table \@ref(tab:resNSSpoint), it can be observed that in this case, the DS 
 
 
 results.point <-  results.point %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -699,17 +699,17 @@ abline(v = mean(NSS.line$ds.est), col = 'red')
 results.line <- read.csv('Results/results NS Strat 5000 line.csv')
 results.line$X <- NULL
 ```
-From Table \@ref(tab:resNSSline), it can be seen that in this case, the performance of both models was very similar throuhgout all areas, with the exception being the mean estimates and bias. The mean estimate for DSM was again a slight overestimation and as a result, bias was positive, while DS underestimated by almost the same amount, leading to an almost identical but negative bias. The Mean Std errors and Std Deviation of estimates were slightly lower for DSM, however the difference in both cases is very small. The Mean CV for each method is very similar, being slightly in favour of the DSM method although the difference is negligible. The DS method has a slightly higher probability of truth being contained within its confidence intervals, at `r results.line[6,2]` compared to `r results.line[6,1]`, however this small difference is likely due to the slightly higher Std errors from the DS method widening the confidence interval. Despite this, both methods achieved truth in their confidence intervals over the 95% significance level. The skewness scores for both are very similar and suggest again a slight right skew however this is small. The kurtosis scores are close to 3 but larger, suggesting the distribution of the estimates are is similar to that of a normal distribution, with a slight trend towards a leptokurtic distribution. Overall, while the mean estimate appears in favour of the DS method, the DSM approach can be said to have performed better in this simulation, due to the small bias, lower Mean Std error and coefficients of variation. 
+From Table \@ref(tab:resNSSline), it can be seen that in this case, the performance of both models was very similar throughout all areas, with the exception being the mean estimates and bias. The mean estimate for DSM was again a slight overestimation and as a result, bias was positive, while DS underestimated by almost the same amount, leading to an almost identical but negative bias. The Mean Std errors and Std Deviation of estimates were slightly lower for DSM, however the difference in both cases is very small. The Mean CV for each method is very similar, being slightly in favour of the DSM method although the difference is negligible. The DS method has a slightly higher probability of truth being contained within its confidence intervals, at `r results.line[6,2]` compared to `r results.line[6,1]`, however this small difference is likely due to the slightly higher Std errors from the DS method widening the confidence interval. Despite this, both methods achieved truth in their confidence intervals over the 95% significance level. The skewness scores for both are very similar and suggest again a slight right skew however this is small. The kurtosis scores are close to 3 but larger, suggesting the distribution of the estimates are is similar to that of a normal distribution, with a slight trend towards a leptokurtic distribution. Overall, while the mean estimate appears in favour of the DS method, the DSM approach can be said to have performed better in this simulation, due to the small bias, lower Mean Std error and coefficients of variation. 
 
 ``` {r resNSSline}
 
 
 results.line <-  results.line %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -753,11 +753,11 @@ From the results in Table \@ref(tab:resNSSzig), it can be seen that in this case
 ``` {r resNSSzig}
 
 results.zigzag <-  results.zigzag %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -769,7 +769,7 @@ kable(results.zigzag,
                       latex_options = "hold_position")
 ```
 
-
+\pagebreak
 ## Discussion of Results
 
 The aim of this section is to briefly summarise the results of the above simulations, due to the extensive number of results. Initially looking at the non stratified results, those from the point design appeared very similar for both the DSM approach and the DS approach, with DSM having a slightly higher bias. While DSM was better at estimating the true variance, the variance estimate was larger than that of DS. Added to the failure to achieve 95% confidence interval coverage, the DS was concluded to perform better in this design. Examining the non-stratified line transect designs, both designs found similar results, with DSM having a larger and positive bias in comparison to the negative bias of DS for both. Due to the similar coverage scores, these designs can be compared. Consisted across both was DSM's ability to better estimate the true variance, leading to more precise estimates, at the expense of confidence interval coverage. The variance estimates across the two designs are very similar, however the true variance in the zigzag design is slight higher than that of the parallel line design. This indicates that while the true variance is higher, both methods do a better job of estimating it that with the true variance in the line design.
@@ -782,7 +782,7 @@ Now looking at the stratified result, the point transect results are very simila
 
 ## Introduction
 
-For our next set of simulations, I will revisit the the example simulation provided in Section 2.5.2 of @Buckland2015 and use both a DS and DSM approach to repeat these simulations. It must be noted that the original analysis was part of a survey design case study by L Marshall and used the R package _DSsim_ @R-DSsim . For the purpose of this study, each of the designs and simulations will be translated into the _dsims_ @R-dsims package used throughout the remainder of the simulations to ensure comparability with the DSM approach developed, with all details from the original designs kept constant. The purpose of this simulation is to conduct a comparison between different designs with comparable cost, as would be conducted using the existing simulation set-up. This region also has the added benefit of verifying the simulation method developed for DSM can be run on study regions with internal holes, such as islands on a seaborne survey.
+For our next set of simulations, I will revisit the the example simulation provided in Section 2.5.2 of @Buckland2015 and use both a DS and DSM approach to repeat these simulations. It must be noted that the original analysis was part of a survey design case study by L Marshall and used the R package _DSsim_ @R-DSsim. For the purpose of this study, each of the designs and simulations will be translated into the _dsims_ @R-dsims package used throughout the remainder of the simulations to ensure comparability with the DSM approach developed, with all details from the original designs kept constant. The purpose of this simulation is to conduct a comparison between different designs with comparable cost, as would be conducted using the existing simulation set-up. This region also has the added benefit of verifying the simulation method developed for DSM can be run on study regions with internal holes, such as islands on a seaborne survey.
 
 ## Methods
 
@@ -814,7 +814,7 @@ We can now examine the results of the Random parallel line design by initially p
 ``` {r}
 test <- wilcox.test(Mont.rand$dsm.est, Mont.rand$ds.est, paired = T, alternative = 'greater')
 ```
-This returned a p-value of `r test$p.value` indicating at any significance level, the null hypothesis of the diffeence between the estimates being zero is rejected in favour of the alternate, that the DSM estimates are greater than those of DS.
+This returned a p-value of `r test$p.value` indicating at any significance level, the null hypothesis of the difference between the estimates being zero is rejected in favour of the alternate, that the DSM estimates are greater than those of DS.
 
 ```{r histMontrand, fig.show = 'hold', out.width='50%', fig.cap='Histograms of abundance estimates for Buckland 2015 example region using a random parallel line design: Left- DSM approach, Right- DS aproach. The red line in each denotes the mean of each set of estimates'}
 
@@ -832,17 +832,17 @@ results.rand <- read.csv('Results/results Montrave random.csv')
 results.rand$X <- NULL
 ```
 
-In Table \@ref(tab:resMontrand), we can see the various statistics extracted during the course of the simulations. As we have seen throughout throughout this report, the mean for the DSM is a slight overestimates and the DS is a slight underestimates. This is transferred into the bias, with the DSM having a positve bias and DS having a negative bias, however both of these are below the 5% level so no concerns are raised for either method. Unfortunately, there are major concerns regarding the Mean Std errors of the estimates, which are the estimator of the Std deviations. For both methods, it can be seen that they are underestimates of the Std deviations and very severely in the case of the DSM method. This is problematic as not capturing all of the variance can lead to the the results assuming they are more accurate than they actually are. These underestimations of variance are translated into the confidence interval coverage, where both fail to contain truth at the 95% confidence level. Additionally, the skewness and kurtosis statistics are very different for the DSM method, likely as a result of the extreme overestimations produce by some survey realisation. Overall, it could be concluded that in this scenario, the DS method performed better, by virtue of underestimating the variance less and having less extreme estimates, however neither method should be considered adequate in this case.
+In Table \@ref(tab:resMontrand), we can see the various statistics extracted during the course of the simulations. As we have seen throughout throughout this report, the mean for the DSM is a slight overestimates and the DS is a slight underestimates. This is transferred into the bias, with the DSM having a positive bias and DS having a negative bias, however both of these are below the 5% level so no concerns are raised for either method. Unfortunately, there are major concerns regarding the Mean Std errors of the estimates, which are the estimator of the Std deviations. For both methods, it can be seen that they are underestimates of the Std deviations and very severely in the case of the DSM method. This is problematic as not capturing all of the variance can lead to the the results assuming they are more accurate than they actually are. These underestimations of variance are translated into the confidence interval coverage, where both fail to contain truth at the 95% confidence level. Additionally, the skewness and kurtosis statistics are very different for the DSM method, likely as a result of the extreme overestimations produce by some survey realisation. Overall, it could be concluded that in this scenario, the DS method performed better, by virtue of underestimating the variance less and having less extreme estimates, however neither method should be considered adequate in this case.
 
 ``` {r resMontrand}
 
 
 results.rand <-  results.rand %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -883,11 +883,11 @@ From the results in Table \@ref(tab:resMontline) the overestimation implied from
 
 
 results.para <-  results.para %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -927,11 +927,11 @@ The results seen within Table \@ref(tab:resMontzig) appear very similar to those
 ``` {r resMontzig}
 
 results.zig <-  results.zig %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -943,10 +943,11 @@ kable(results.zig,
                       latex_options = "hold_position")
 ```
 
+\pagebreak
 
 ## Discussion of Results
 
-As both the Systemic parallel line design and the zigzag design were selected and specified such that they had a comparable cost to the survey. This cost is the trackline length, which is to total distance required to travel along each transect and includes the distances between transects. This is often termed the cost of a study as the distance travelled during a study is a major factor in the overall cost of a study, such as through fuel costs for air or seaborne studies as well as the time and resources associated with additional distances travelled. In these designs, the mean trackline length was around 700km for both survey designs. This allows for the results of the two designs to be compared and would be one of the steps conducted when selecting an appropriate survey design in the lead up to a real work survey. Comparing the results in both Tables \@ref(tab:resMontline) and \@ref(tab:resMontzig), it can be seen that the mean estimates from the DSM method are consistent accross the two survey designs, with a similar level of positive bias present in both. With the DS results, there appears to be a reduction in bias when using the parallel line design. Looking at variance estimation, the variance estimates from the zigzag designs are lower for both methods, indicating an increase in the precision as a result of using the zigzag design. The coefficients of variation stayed similar across the different designs as did the confidence interval coverage, with the skewness and kurtosis statistics also changing little between the two designs. Overall these results are consistent with those seen in @Buckland2015 with it being noted that the zigzag design offered a higher level of precision than the Mean Std error suggests. This has been confirmed by both the original DS method as well as the DSM approach, with this approach in fact giving improved estimates for the variance. It is however noted within @Buckland2015 that while the trackline length was similar for both designs, in situations where travelling on effort, i.e on a transect, is far more costly than off effort, the advantage gained from the zigzag design are negated by the addition cost. Despite this, in general, zigzag designs offer a higher level of efficiency due to the substantial increase in time spent on effort in comparison to parallel line designs. 
+As both the Systemic parallel line design and the zigzag design were selected and specified such that they had a comparable cost to the survey. This cost is the track line length, which is to total distance required to travel along each transect and includes the distances between transects. This is often termed the cost of a study as the distance travelled during a study is a major factor in the overall cost of a study, such as through fuel costs for air or seaborne studies as well as the time and resources associated with additional distances travelled. In these designs, the mean track line length was around 700km for both survey designs. This allows for the results of the two designs to be compared and would be one of the steps conducted when selecting an appropriate survey design in the lead up to a real work survey. Comparing the results in both Tables \@ref(tab:resMontline) and \@ref(tab:resMontzig), it can be seen that the mean estimates from the DSM method are consistent across the two survey designs, with a similar level of positive bias present in both. With the DS results, there appears to be a reduction in bias when using the parallel line design. Looking at variance estimation, the variance estimates from the zigzag designs are lower for both methods, indicating an increase in the precision as a result of using the zigzag design. The coefficients of variation stayed similar across the different designs as did the confidence interval coverage, with the skewness and kurtosis statistics also changing little between the two designs. Overall these results are consistent with those seen in @Buckland2015 with it being noted that the zigzag design offered a higher level of precision than the Mean Std error suggests. This has been confirmed by both the original DS method as well as the DSM approach, with this approach in fact giving improved estimates for the variance. It is however noted within @Buckland2015 that while the track line length was similar for both designs, in situations where travelling on effort, i.e on a transect, is far more costly than off effort, the advantage gained from the zigzag design are negated by the addition cost. Despite this, in general, zigzag designs offer a higher level of efficiency due to the substantial increase in time spent on effort in comparison to parallel line designs. 
 
 \pagebreak
 
@@ -962,7 +963,7 @@ To investigate if changing the variance estimator improves the performance of th
 
 ## Results
 
-From Table \@ref(tab:resR2est) the same pattern as has been seen throughout this report is evident. The variance estimate, the Mean std error, for the DS method is far larger than the true variance, the Std Dev of the estimates, by over 60%. In comparison, the variance estimate for the DSM approach is only a slight overestimate at only around 10% higher. These then transfer into the coefficients of variation with the DSM having a respectively lower CV than that of the DS method. The confidence interval coverage for the DS method is very impressive, however this is likely due to the large variance estimates widening the confidence interval appreciably to contain truth. While the coverage for the DSM method is slightly lower, it is still above the 95% confidence limit and does not raise concerns. Overall in this case the DSM method can be said to have performed better, mainly due to the substantially better variance estimate and resulting coefficient of variation improvements over the DS method. 
+From Table \@ref(tab:resR2est) the same pattern as has been seen throughout this report is evident. The variance estimate, the Mean Std error, for the DS method is far larger than the true variance, the Std Dev of the estimates, by over 60%. In comparison, the variance estimate for the DSM approach is only a slight overestimate at only around 10% higher. These then transfer into the coefficients of variation with the DSM having a respectively lower CV than that of the DS method. The confidence interval coverage for the DS method is very impressive, however this is likely due to the large variance estimates widening the confidence interval appreciably to contain truth. While the coverage for the DSM method is slightly lower, it is still above the 95% confidence limit and does not raise concerns. Overall in this case the DSM method can be said to have performed better, mainly due to the substantially better variance estimate and resulting coefficient of variation improvements over the DS method. 
 
 ``` {r resR2est}
 results.R2 <- read.csv('Results/results NS R2 estimator 5000.csv')
@@ -970,11 +971,11 @@ results.R2 <- read.csv('Results/results NS R2 estimator 5000.csv')
 results.R2$X <- NULL
 
 results.R2 <-  results.R2 %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -986,7 +987,7 @@ kable(results.R2,
                       latex_options = "hold_position")
 ```
 
-Moving on now to look at the results in Table \@ref(tab:resO2est), from when the variance estimator is set as the 'O2' estimator. It can be seen that there has been a significant improvement in the variance estimation in comparison to the 'R2' results above. The variance estimates for both methods are near identical now, with both being an overestimate of the true variance by around 10%. It appears that while the variance estimate for the DSM method is slightly closer than the DS approach, the difference is very marginal, highlighting the improvements to the estimation in the DS method. The confidence interval coverage for DS is slightly lower than previously, with this being the only statistic which appears worse for the 'O2' estimator than the 'R2' estimator. However this is likely due to the more representative variance estimate shrinking the confidence interval. Despite this, both methods acheived a confidence interval coverage above the 95% level. Overall in this case there is very little to differentiate between the two methods. It could be considered that the DS method performed better, as given that all other statistics are near identical, the mean estimate is closer to truth and as a result the bias is slightly smaller. However, the DSM method still performed well, with its bias being below 1%. 
+Moving on now to look at the results in Table \@ref(tab:resO2est), from when the variance estimator is set as the 'O2' estimator. It can be seen that there has been a significant improvement in the variance estimation in comparison to the 'R2' results above. The variance estimates for both methods are near identical now, with both being an overestimate of the true variance by around 10%. It appears that while the variance estimate for the DSM method is slightly closer than the DS approach, the difference is very marginal, highlighting the improvements to the estimation in the DS method. The confidence interval coverage for DS is slightly lower than previously, with this being the only statistic which appears worse for the 'O2' estimator than the 'R2' estimator. However this is likely due to the more representative variance estimate shrinking the confidence interval. Despite this, both methods achieved a confidence interval coverage above the 95% level. Overall in this case there is very little to differentiate between the two methods. It could be considered that the DS method performed better, as given that all other statistics are near identical, the mean estimate is closer to truth and as a result the bias is slightly smaller. However, the DSM method still performed well, with its bias being below 1%. 
 
 ``` {r resO2est}
 results.O2<- read.csv('Results/results NS O2 estimator 5000.csv')
@@ -994,11 +995,11 @@ results.O2<- read.csv('Results/results NS O2 estimator 5000.csv')
 results.O2$X <- NULL
 
 results.O2 <-  results.O2 %>%
-        `rownames<-`(c('Mean',
-                 'Bias',
-                 'Mean Std error of estimates',
-                 'Std Dev of estimates',
-                 'Mean CV',
+        `rownames<-`(c('Mean abundance estimate',
+                 'Bias (%)',
+                 'Mean Std error of estimates (estimated variance)',
+                 'Std Dev of estimates (true variance)',
+                 'Mean Coefficient of variation',
                  'Confidence Interval Coverage',
                  'Estimate Skewness',
                  'Estimate Kurtosis')) %>%
@@ -1009,7 +1010,7 @@ kable(results.O2,
         kable_styling(position = 'center',
                       latex_options = "hold_position")
 ```
-
+\pagebreak
 ## Discussion of Results
 
 These simulations have highlighted the improvements which can be made to the DS method to improve its variance estimation. It can be seen that the DS approach massively overestimates the variances using the default 'R2' estimator, while moving to the recommended 'O2' estimator improves this and makes it comparable or possibly better than the DS method, if the particular design allows. It is noted that if variance estimation can be improved, in the limit the DS approach will be more precise, due to the smaller true variance overall.
@@ -1024,7 +1025,7 @@ The simulation on the North Sea region provided further interesting results, ind
 
 Simulations using the example for @Buckland2015 proved the most interesting, in particular for the random design. Here, both method underestimated the variance, with DSM doing so to a far greater degree. Additionally, DSM produced some extreme overestimates, the largest over three times the true population. This, coupled with poor confidence interval coverage, indicates DSM may be less well suited to random designs, due to the potential for extreme overestimates. The results of the other two designs, the systematic parallel line and zigzag line designs, mirrored those found in @Buckland2015, where the zigzag design would be selected due to its improved precision. Within each design, a similar pattern as before emerged with DS overestimating the variance leading to DSM having improved precision, despite the true variance being lower for DS in both cases. 
 
-The final simulation focused on the common trend seen throughout, DS overestimating the variance in comparison to DSM. As a result of changing the encounter rate variance estimator, variance estimatin for DS was greatly improved and became comparable with DSM. However, it was noted this is only an option for a select number of designs.
+The final simulation focused on the common trend seen throughout, DS overestimating the variance in comparison to DSM. As a result of changing the encounter rate variance estimator, variance estimation for DS was greatly improved and became comparable with DSM. However, it was noted this is only an option for a select number of designs.
 
 
 ## Limitations
@@ -1051,9 +1052,9 @@ A number of interesting conclusions can be drawn from the various simulations co
 
 Throughout the simulations conducted, the DSM approach has performed well in comparison to the existing distance sampling approach, in some cases better and in others worse. While there is some evidence that the abundance estimates for point transect designs may not be as accurate as one may wish, the simulation in which DSM performed significantly worse was the random parallel line design from the Buckland 2015 example case study. This study showed that the DSM approach severely underestimated the true variance of the estimates, a major concern, as well as its confidence interval coverage being below 90%.
 
-Another result which was consistent throughout the simulations was the trend for DSM to overestimate the abundance in every single simulation. This was further tested at various points using wilcoxon tests, where the null was rejected in favour of the alternate that DSM estimates were greater than DS estimates. This does raise some concerns as overestimating the population is more problematic than underestimation.
+Another result which was consistent throughout the simulations was the trend for DSM to overestimate the abundance in every single simulation. This was further tested at various points using Wilcoxon tests, where the null was rejected in favour of the alternate that DSM estimates were greater than DS estimates. This does raise some concerns as overestimating the population is more problematic than underestimation.
 
-Variance estimation appeared, in general, to be far better using DSM when line transects were used, with the variance estimates very similar using point transect designs. However it was noted that the majority of simulation used the default estimator 'R2' where random line placement is assumed, despite systematic placement being used. Both the stratification of the survey region, alongside using a more appropriate variance estimator were found to greatly improve the variance estimation for DS, making it comparable or in some cases better than that of DSM.
+Variance estimation appeared, in general, to be far better using DSM when line transects were used, with the variance estimates very similar using point transect designs. However it was noted that the majority of simulation used the default estimator 'R2' where random line placement is assumed, despite systematic placement being used. Both the stratification of the survey region, alongside using a more appropriate variance estimator were found to greatly improve the variance estimation for DS, making it comparable or in some cases better than that of DSM. This was identified as a key area of further research, with the potential to greatly improve the precision of both approaches.
 
 Overall, being able to simulate distance sampling designs and make design selections based on the results of both distance sampling analysis and density surface modelling provides a great benefit to researchers, taking advantage of the increased precision of the abundance estimates provided by DSM. Due to the likely increase in demand for spatial models, the inclusion of this at the survey design stage provides added assurances that should this be requested at a later stage, the design selected has been tested and the estimates produced are sufficiently accurate and precise for this analysis to take place.
 
